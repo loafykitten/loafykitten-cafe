@@ -6,6 +6,7 @@ interface Props {
 const { pathname } = Astro.props;
 
 const navLinks = [
+  { href: "/", label: "home" },
   { href: "https://loafykitten.bandcamp.com", label: "music" },
   { href: "https://github.com/loafykitten", label: "my software" },
   { href: "/blog", label: "blog" },
@@ -65,6 +66,7 @@ const isCurrentPath = (href: string) =>
 
   .site-links {
     margin: 1rem 0;
+    color: blue;
   }
 
   .site-links a {

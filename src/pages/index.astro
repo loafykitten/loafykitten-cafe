@@ -1,32 +1,15 @@
 ---
+import AuthorImage from "src/features/author-image/AuthorImage.astro";
+import MusicPlayer from "src/features/music-player/MusicPlayer.astro";
+import VisitorNumber from "src/features/visitor-number/VisitorNumber.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import MusicPlayer from "../components/MusicPlayer.astro";
-import authorChangerScript from "../scripts/author-changer.ts?url";
-import visitorNumberScript from "../scripts/visitor-number.ts?url";
 ---
 
 <BaseLayout title="homepage">
-  <h3 class="visitor-count">
-    you're visitor number
-    <button class="visitor-number" type="button" aria-label="Show visitor count">
-      <img src="/images/broken-image.gif" alt="" aria-hidden="true" />
-      &nbsp;
-    </button>
-    on this site since Mar 13, XX26
-  </h3>
+  <VisitorNumber />
 
   <div class="author">
-    <div class="author-left">
-      <img src="/images/sketch.png" alt="loafykitten fursona" />
-      <button
-        class="author-changer-btn"
-        type="button"
-        aria-label="Pause profile image animation"
-        aria-pressed="false"
-      >
-        &#9208;
-      </button>
-    </div>
+    <AuthorImage />
 
     <p class="author-intro">hiii nyaa~ ꨄ︎ i'm ember! Or loafykitten nyaa~! whatever whatever!</p>
     <p>
@@ -50,31 +33,9 @@ import visitorNumberScript from "../scripts/visitor-number.ts?url";
   <p class="music-intro">and for the gentleperson, may i interest you in my lofi perhaps?</p>
 
   <MusicPlayer audioSrc="/audio/longing.mp3" track="longing" artist="loafykitten" />
-
-  <script type="module" src={authorChangerScript} is:inline></script>
-  <script type="module" src={visitorNumberScript} is:inline></script>
 </BaseLayout>
 
 <style>
-  .visitor-count {
-    margin: 3rem 0;
-  }
-
-  .visitor-count img {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-  }
-
-  .visitor-number {
-    cursor: pointer;
-    background: none;
-    border: 0;
-    color: inherit;
-    font: inherit;
-    padding: 0;
-  }
-
   .author {
     max-width: 800px;
     margin: 0 auto;
@@ -87,28 +48,11 @@ import visitorNumberScript from "../scripts/visitor-number.ts?url";
     clear: both;
   }
 
-  .author-left {
-    float: left;
-    width: 160px;
-  }
-
-  .author-left img {
-    width: 150px;
-    height: 200px;
-    border: 5px outset #ddd;
-  }
-
-  .author-left button {
-    display: block;
-    width: 30px;
-    height: 30px;
-    margin: 0.5rem auto 0;
-  }
-
   .author p {
     margin-left: 200px;
     text-align: left;
     font-size: 1.2rem;
+    text-align: justify;
   }
 
   .author-intro {
@@ -127,6 +71,7 @@ import visitorNumberScript from "../scripts/visitor-number.ts?url";
   }
 
   .music-intro {
+    letter-spacing: 0.03em;
     margin: 2rem auto 0;
   }
 
@@ -138,13 +83,6 @@ import visitorNumberScript from "../scripts/visitor-number.ts?url";
 
     .author {
       padding: 1rem 0;
-    }
-
-    .author-left {
-      float: none;
-      width: auto;
-      margin: 0 auto 1rem;
-      text-align: center;
     }
 
     .author p {

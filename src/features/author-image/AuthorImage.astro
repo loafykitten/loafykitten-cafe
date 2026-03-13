@@ -1,0 +1,47 @@
+---
+import authorImageScript from "./author-image.ts?url";
+---
+
+<div class="author-left">
+  <img src="/images/sketch.png" alt="loafykitten fursona" />
+  <button
+    class="author-changer-btn"
+    type="button"
+    aria-label="Pause profile image animation"
+    aria-pressed="false"
+  >
+    &#9208;
+  </button>
+</div>
+
+
+<script type="module" src={authorImageScript} is:inline></script>
+
+<style>
+  .author-left {
+    float: left;
+    width: 160px;
+  }
+
+  .author-left img {
+    width: 150px;
+    height: 200px;
+    border: 5px outset #ddd;
+  }
+
+  .author-left button {
+    display: block;
+    width: 30px;
+    height: 30px;
+    margin: 0.5rem auto 0;
+  }
+
+  @media (max-width: 700px) {
+    .author-left {
+      float: none;
+      width: auto;
+      margin: 0 auto 1rem;
+      text-align: center;
+    }
+  }
+</style>
