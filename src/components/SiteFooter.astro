@@ -1,0 +1,99 @@
+---
+const linkedBadges = [
+  {
+    href: "https://discord.com",
+    src: "/images/88x31/discord2.gif",
+    alt: "Join my community discord",
+  },
+  {
+    href: "https://spacehey.com/loafykitten",
+    src: "/images/88x31/spacehey.png",
+    alt: "Visit my SpaceHey",
+  },
+  {
+    href: "https://bsky.app/profile/loafykitten.cafe",
+    src: "/images/88x31/bluesky.png",
+    alt: "Visit my Bluesky",
+  },
+  {
+    href: "https://www.debian.org/",
+    src: "/images/88x31/debian-powered.gif",
+    alt: "This site is served via debian",
+  },
+  {
+    href: "https://www.youtube.com/watch?v=EuJ6UR_pD5s",
+    src: "/images/88x31/miku.gif",
+    alt: "Listen to my favorite Miku song",
+  },
+];
+
+const staticBadges = [
+  {
+    src: "/images/88x31/weedpizzatoebeans_now_edit.gif",
+    alt: "toe beans now!",
+  },
+  {
+    src: "/images/88x31/transnow2.gif",
+    alt: "trans rights now!",
+  },
+  {
+    src: "/images/88x31/seedyourtorrents.gif",
+    alt: "seed your torrents!",
+  },
+  {
+    src: "/images/88x31/fftake.gif",
+    alt: "take the web back!",
+  },
+  {
+    src: "/images/88x31/KIT_micro_banner_02.png",
+    alt: "kitten pride!",
+  },
+];
+---
+
+<footer class="site-footer">
+  <div class="badges">
+    {
+      linkedBadges.map(({ href, src, alt }) => (
+        <a href={href}>
+          <img src={src} alt={alt} />
+        </a>
+      ))
+    }
+
+    {
+      staticBadges.map(({ src, alt }) => (
+        <img src={src} alt={alt} />
+      ))
+    }
+  </div>
+
+  <h3>ヽ(*・ω・)ﾉ &nbsp; there's no place like 127.0.0.1</h3>
+</footer>
+
+<style>
+  .site-footer {
+    margin: 5rem auto 0;
+    max-width: 500px;
+    text-align: center;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .badges img {
+    display: block;
+  }
+
+  @media (max-width: 700px) {
+    .site-footer {
+      margin-top: 3rem;
+      max-width: 100%;
+    }
+  }
+</style>
+

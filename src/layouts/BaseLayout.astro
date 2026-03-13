@@ -1,0 +1,35 @@
+---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const pathname = Astro.url.pathname;
+const pageTitle = `${title} | loafykitten`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="overlay"></div>
+    <div class="site-shell">
+      <div class="site-content">
+        <SiteHeader pathname={pathname} />
+        <main>
+          <slot />
+        </main>
+        <SiteFooter />
+      </div>
+    </div>
+  </body>
+</html>
+

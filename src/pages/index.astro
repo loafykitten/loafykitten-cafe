@@ -1,0 +1,162 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MusicPlayer from "../components/MusicPlayer.astro";
+import authorChangerScript from "../scripts/author-changer.ts?url";
+import visitorNumberScript from "../scripts/visitor-number.ts?url";
+---
+
+<BaseLayout title="homepage">
+  <h3 class="visitor-count">
+    you're visitor number
+    <button class="visitor-number" type="button" aria-label="Show visitor count">
+      <img src="/images/broken-image.gif" alt="" aria-hidden="true" />
+      &nbsp;
+    </button>
+    on this site since Mar 13, XX26
+  </h3>
+
+  <div class="author">
+    <div class="author-left">
+      <img src="/images/sketch.png" alt="loafykitten fursona" />
+      <button
+        class="author-changer-btn"
+        type="button"
+        aria-label="Pause profile image animation"
+        aria-pressed="false"
+      >
+        &#9208;
+      </button>
+    </div>
+
+    <p class="author-intro">hiii nyaa~ ꨄ︎ i'm ember! Or loafykitten nyaa~! whatever whatever!</p>
+    <p>
+      i'm a 31 year old gal who makes lofi (sometimes other stuff), codes (c#/typescript/swift), and
+      yaps a lot on social media whatever whatever. sometimes i yap on my blog too nyaa!
+    </p>
+    <p>i also love playing elden ring, pokopia, visual novels, ffxiv (when i get the chance)</p>
+    <p>
+      i'm a moderate enthusiast of retro/nostalgia and use a heavily windows 7 themed w10 for my
+      gaming desktop nyaa. i have an ipod mini (gen 1) that has a lot of 00s stuff on it like
+      paramore/a7x/etc
+    </p>
+    <p>oh sometimes i'm live on twitch/youtube btw whatever whatever~</p>
+
+    <nav class="stream-links" aria-label="Streaming links">
+      <a href="https://twitch.tv/loafykitten">[twitch]</a>
+      <a href="https://youtube.com/@loafykitten">[youtube]</a>
+    </nav>
+  </div>
+
+  <p class="music-intro">and for the gentleperson, may i interest you in my lofi perhaps?</p>
+
+  <MusicPlayer audioSrc="/audio/longing.mp3" track="longing" artist="loafykitten" />
+
+  <script type="module" src={authorChangerScript} is:inline></script>
+  <script type="module" src={visitorNumberScript} is:inline></script>
+</BaseLayout>
+
+<style>
+  .visitor-count {
+    margin: 3rem 0;
+  }
+
+  .visitor-count img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+
+  .visitor-number {
+    cursor: pointer;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    padding: 0;
+  }
+
+  .author {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .author::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+
+  .author-left {
+    float: left;
+    width: 160px;
+  }
+
+  .author-left img {
+    width: 150px;
+    height: 200px;
+    border: 5px outset #ddd;
+  }
+
+  .author-left button {
+    display: block;
+    width: 30px;
+    height: 30px;
+    margin: 0.5rem auto 0;
+  }
+
+  .author p {
+    margin-left: 200px;
+    text-align: left;
+    font-size: 1.2rem;
+  }
+
+  .author-intro {
+    margin-top: 0;
+  }
+
+  .stream-links {
+    padding: 0;
+    text-align: center;
+  }
+
+  .stream-links a {
+    margin: 0 1rem;
+    font-size: 1.5rem;
+    text-shadow: none;
+  }
+
+  .music-intro {
+    margin: 2rem auto 0;
+  }
+
+  @media (max-width: 700px) {
+    .visitor-count {
+      margin: 2rem 0;
+      line-height: 1.5;
+    }
+
+    .author {
+      padding: 1rem 0;
+    }
+
+    .author-left {
+      float: none;
+      width: auto;
+      margin: 0 auto 1rem;
+      text-align: center;
+    }
+
+    .author p {
+      margin-left: 0;
+      font-size: 1.15rem;
+      text-align: center;
+    }
+
+    .stream-links a {
+      display: inline-block;
+      margin: 0.35rem 0.5rem;
+      font-size: 1.2rem;
+    }
+  }
+</style>

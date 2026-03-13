@@ -1,0 +1,17 @@
+{
+  "name": "loafykitten-net",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro dev",
+    "start": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro preview",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro check"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.7",
+    "astro": "^6",
+    "typescript": "^5.9.3"
+  }
+}

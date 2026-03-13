@@ -1,19 +1,25 @@
-const audio = document.querySelector("[data-audio-player]");
-const playButton = document.querySelector("[data-audio-play]");
-const progress = document.querySelector("[data-audio-progress]");
-const currentTimeLabel = document.querySelector("[data-current-time]");
-const totalTimeLabel = document.querySelector("[data-total-time]");
+const formatTime = (seconds: number) => {
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    return "0:00";
+  }
 
-if (audio && playButton && progress && currentTimeLabel && totalTimeLabel) {
-  const formatTime = (seconds) => {
-    if (!Number.isFinite(seconds) || seconds < 0) {
-      return "0:00";
-    }
+  const minutes = Math.floor(seconds / 60);
+  const remainder = Math.floor(seconds % 60);
+  return `${minutes}:${String(remainder).padStart(2, "0")}`;
+};
 
-    const minutes = Math.floor(seconds / 60);
-    const remainder = Math.floor(seconds % 60);
-    return `${minutes}:${String(remainder).padStart(2, "0")}`;
-  };
+const players = document.querySelectorAll<HTMLElement>("[data-music-player]");
+
+players.forEach((player) => {
+  const audio = player.querySelector<HTMLAudioElement>("[data-audio-player]");
+  const playButton = player.querySelector<HTMLButtonElement>("[data-audio-play]");
+  const progress = player.querySelector<HTMLInputElement>("[data-audio-progress]");
+  const currentTimeLabel = player.querySelector<HTMLElement>("[data-current-time]");
+  const totalTimeLabel = player.querySelector<HTMLElement>("[data-total-time]");
+
+  if (!audio || !playButton || !progress || !currentTimeLabel || !totalTimeLabel) {
+    return;
+  }
 
   const syncProgress = () => {
     const duration = Number.isFinite(audio.duration) ? audio.duration : 0;
@@ -25,7 +31,7 @@ if (audio && playButton && progress && currentTimeLabel && totalTimeLabel) {
     totalTimeLabel.textContent = formatTime(duration);
   };
 
-  const setPlayingState = (isPlaying) => {
+  const setPlayingState = (isPlaying: boolean) => {
     playButton.textContent = isPlaying ? "❚❚" : "▶";
   };
 
@@ -63,4 +69,5 @@ if (audio && playButton && progress && currentTimeLabel && totalTimeLabel) {
   });
 
   syncProgress();
-}
+});
+
