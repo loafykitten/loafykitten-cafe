@@ -5,10 +5,14 @@ import "../styles/global.css";
 
 interface Props {
   title: string;
+  activePath?: string | null;
 }
 
-const { title } = Astro.props;
+const { title, activePath } = Astro.props;
 const pathname = Astro.url.pathname;
+const headerPathname: string | null = Object.prototype.hasOwnProperty.call(Astro.props, "activePath")
+  ? (activePath ?? null)
+  : pathname;
 const pageTitle = `${title} | loafykitten`;
 ---
 
@@ -23,7 +27,7 @@ const pageTitle = `${title} | loafykitten`;
     <div class="overlay"></div>
     <div class="site-shell">
       <div class="site-content">
-        <SiteHeader pathname={pathname} />
+        <SiteHeader pathname={headerPathname} />
         <main>
           <slot />
         </main>
@@ -32,4 +36,3 @@ const pageTitle = `${title} | loafykitten`;
     </div>
   </body>
 </html>
-

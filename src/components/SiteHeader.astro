@@ -1,6 +1,6 @@
 ---
 interface Props {
-  pathname: string;
+  pathname: string | null;
 }
 
 const { pathname } = Astro.props;
@@ -14,6 +14,7 @@ const navLinks = [
 ];
 
 const isCurrentPath = (href: string) =>
+  pathname !== null &&
   href.startsWith("/") &&
   (pathname === href || (href !== "/" && pathname.startsWith(`${href}/`)));
 ---
@@ -106,4 +107,3 @@ const isCurrentPath = (href: string) =>
     }
   }
 </style>
-
