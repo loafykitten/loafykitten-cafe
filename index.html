@@ -69,6 +69,8 @@
                     </nav>
                 </div>
 
+                <p style="margin: 2rem auto 0;">and for the gentleperson, may i interest you in my lofi perhaps?</p>
+
                 <section class="music-player-shell" aria-labelledby="music-player-title">
                     <div class="music-player-window">
                         <div class="music-player-titlebar">
@@ -78,7 +80,8 @@
                                 <span></span>
                             </div>
                             <p id="music-player-title">lofi_player.exe</p>
-                            <button class="music-player-close" type="button" aria-label="Decorative window button">x</button>
+                            <button class="music-player-close" type="button"
+                                aria-label="Decorative window button">x</button>
                         </div>
 
                         <div class="music-player-body">
@@ -90,11 +93,12 @@
                             <audio preload="metadata" src="audio/longing.mp3" data-audio-player></audio>
 
                             <div class="music-player-controls">
-                                <button class="music-player-control" type="button" data-audio-play aria-label="Play or pause song">▶</button>
+                                <button class="music-player-control" type="button" data-audio-play
+                                    aria-label="Play or pause song">▶</button>
                                 <div class="music-player-progress-wrap">
                                     <label class="sr-only" for="track-progress">Song progress</label>
-                                    <input id="track-progress" class="music-player-progress" type="range" min="0" max="100" value="0"
-                                        data-audio-progress />
+                                    <input id="track-progress" class="music-player-progress" type="range" min="0"
+                                        max="100" value="0" data-audio-progress />
                                     <div class="music-player-times">
                                         <span data-current-time>0:00</span>
                                         <span data-total-time>0:00</span>
