@@ -186,6 +186,7 @@ const progressId = `track-progress-${crypto.randomUUID()}`;
 
   .music-player-progress-wrap {
     min-width: 0;
+    transition: opacity 140ms ease;
   }
 
   .music-player-progress {
@@ -194,6 +195,18 @@ const progressId = `track-progress-${crypto.randomUUID()}`;
     margin: 0;
     accent-color: #7fd9ff;
     cursor: pointer;
+  }
+
+  .music-player-control[data-state="loading"] ~ .music-player-progress-wrap {
+    opacity: 0.58;
+  }
+
+  .music-player-control[data-state="loading"] ~ .music-player-progress-wrap .music-player-progress {
+    cursor: wait;
+  }
+
+  .music-player-progress:disabled {
+    opacity: 1;
   }
 
   .music-player-times {

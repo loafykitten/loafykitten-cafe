@@ -44,6 +44,7 @@ players.forEach((player) => {
   const setControlState = (state: "paused" | "loading" | "playing") => {
     playButton.dataset.state = state;
     playButton.setAttribute("aria-busy", String(state === "loading"));
+    progress.disabled = state === "loading";
 
     if (state === "playing") {
       playButton.setAttribute("aria-label", "Pause song");
