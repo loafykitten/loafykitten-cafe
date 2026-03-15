@@ -1,5 +1,6 @@
-const visitorNumber = document.querySelector<HTMLButtonElement>(".visitor-number");
-let visitorCount = 0;
+const visitorNumber =
+  document.querySelector<HTMLButtonElement>(".visitor-number");
+let visitorCount = 8008;
 
 if (visitorNumber) {
   visitorNumber.addEventListener("click", () => {
@@ -8,4 +9,3 @@ if (visitorNumber) {
     visitorNumber.disabled = true;
   });
 }
-
