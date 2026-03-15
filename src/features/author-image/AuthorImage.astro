@@ -1,7 +1,3 @@
----
-import authorImageScript from "./author-image.ts?url";
----
-
 <div class="author-left">
   <img src="/images/sketch.png" alt="loafykitten fursona" />
   <button
@@ -15,7 +11,9 @@ import authorImageScript from "./author-image.ts?url";
 </div>
 
 
-<script type="module" src={authorImageScript} is:inline></script>
+<script>
+  import "./author-image.ts";
+</script>
 
 <style>
   .author-left {

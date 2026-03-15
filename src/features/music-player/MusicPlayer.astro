@@ -1,6 +1,4 @@
 ---
-import musicPlayerScript from "./music-player.ts?url";
-
 interface Props {
   audioSrc: string;
   track: string;
@@ -64,7 +62,9 @@ const progressId = `track-progress-${crypto.randomUUID()}`;
   </div>
 </section>
 
-<script type="module" src={musicPlayerScript} is:inline></script>
+<script>
+  import "./music-player.ts";
+</script>
 
 <style>
   .music-player-shell {

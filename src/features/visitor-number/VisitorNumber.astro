@@ -1,7 +1,3 @@
----
-import visitorNumberScript from "./visitor-number.ts?url";
----
-
 <h3 class="visitor-count">
 you're visitor number
 <button class="visitor-number" type="button" aria-label="Show visitor count">
@@ -12,7 +8,9 @@ on this site since Mar 13, XX26
 </h3>
 
 
-<script type="module" src={visitorNumberScript} is:inline></script>
+<script>
+  import "./visitor-number.ts";
+</script>
 
 <style>
   .visitor-count {
