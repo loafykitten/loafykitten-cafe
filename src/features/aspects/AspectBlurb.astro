@@ -1,0 +1,83 @@
+---
+interface Props {
+    aspect: string
+    blurb: string
+    subBlurb?: string
+}
+
+const { aspect, blurb, subBlurb } = Astro.props
+const normalizedAspect = aspect.toLowerCase()
+---
+
+<h2
+    class="aspect-blurb"
+    data-aspect={normalizedAspect}
+    style={`--aspect-color: var(--color-${normalizedAspect})`}
+>
+    {blurb}
+
+    {
+        subBlurb && (
+            <>
+                <br />
+                <small>{subBlurb}</small>
+            </>
+        )
+    }
+</h2>
+
+<style>
+    .aspect-blurb {
+        position: relative;
+        grid-row: 1 / 1;
+        grid-column: 1 / 1;
+        font-size: 2rem;
+        text-align: center;
+        opacity: 0;
+        top: 0;
+        color: var(--aspect-color);
+        text-shadow: 1px 1px 5px #000;
+        transition:
+            opacity 0.3s,
+            top 0.3s;
+
+        & small {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            display: block;
+        }
+    }
+
+    @media (hover: hover) {
+        :global(.landing:has(.aspect-card[data-aspect='loafykitten']:is(:hover, :focus-within)))
+            .aspect-blurb[data-aspect='loafykitten'],
+        :global(.landing:has(.aspect-card[data-aspect='ember']:is(:hover, :focus-within)))
+            .aspect-blurb[data-aspect='ember'],
+        :global(.landing:has(.aspect-card[data-aspect='music']:is(:hover, :focus-within)))
+            .aspect-blurb[data-aspect='music'] {
+            opacity: 1;
+            top: 50px;
+        }
+    }
+
+    @media (hover: none) {
+        :global(.landing[data-active-aspect='loafykitten']) .aspect-blurb[data-aspect='loafykitten'],
+        :global(.landing[data-active-aspect='ember']) .aspect-blurb[data-aspect='ember'],
+        :global(.landing[data-active-aspect='music']) .aspect-blurb[data-aspect='music'] {
+            opacity: 1;
+            top: 50px;
+        }
+    }
+
+    @media (hover: none) and (max-height: 700px) {
+        .aspect-blurb {
+            font-size: 1.5rem;
+        }
+
+        :global(.landing[data-active-aspect='loafykitten']) .aspect-blurb[data-aspect='loafykitten'],
+        :global(.landing[data-active-aspect='ember']) .aspect-blurb[data-aspect='ember'],
+        :global(.landing[data-active-aspect='music']) .aspect-blurb[data-aspect='music'] {
+            top: 30px;
+        }
+    }
+</style>

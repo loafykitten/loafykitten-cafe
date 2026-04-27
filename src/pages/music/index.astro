@@ -1,0 +1,196 @@
+---
+import bgMusic from '@/assets/images/bg-music.jpg'
+import Aboutloafykitten from '@/features/music/Aboutloafykitten.astro'
+import CassetteCarousel from '@/features/music/CassetteCarousel.astro'
+import CassetteDeck from '@/features/music/CassetteDeck.astro'
+import MusicSocials from '@/features/music/MusicSocials.astro'
+import { cassetteData } from '@/features/music/music-data'
+import type { ClientSongData } from '@/features/music/music-data'
+import IslandLayout from '@/layouts/IslandLayout.astro'
+import type { BgImageMetadata } from '@/types'
+import { getImage } from 'astro:assets'
+
+const background: BgImageMetadata = {
+    url: bgMusic,
+    artistMetadata: {
+        artist: 'Mohamed_hassan',
+        artistUrl: 'https://pixabay.com/users/mohamed_hassan-5229782/',
+    },
+    pageBg: '#3971a5',
+}
+
+const musicSocials = [
+    { href: 'https://www.youtube.com/@loafykitten', name: 'YouTube' },
+    { href: 'https://www.ko-fi.com/loafykitten', name: 'Ko-fi' },
+    { href: 'https://patreon.com/loafykitten', name: 'Patreon' },
+]
+
+// Process album art at build time
+const albumArtCache = new Map<string, string>()
+for (const song of cassetteData) {
+    if (!albumArtCache.has(song.album.name)) {
+        const optimized = await getImage({
+            src: song.album.albumArt,
+            width: 160,
+            format: 'webp',
+            quality: 80,
+        })
+        albumArtCache.set(song.album.name, optimized.src)
+    }
+}
+
+const clientSongs: ClientSongData[] = cassetteData.map((song, i) => ({
+    index: i,
+    title: song.title,
+    albumName: song.album.name,
+    albumArtSrc: albumArtCache.get(song.album.name)!,
+    href: song.href!,
+    odesliHref: song.album.odesliHref,
+}))
+---
+
+<IslandLayout
+    title="music and stuff"
+    description="loafykitten's music projects, including lofi beats, experimental sound design, and more."
+    bgImageMetadata={background}
+>
+    <section class="music-shell" id="music-player-view">
+        <CassetteCarousel songs={clientSongs} />
+        <CassetteDeck />
+        <div class="music-nav">
+            <a href="/" class="home-link">home</a>
+            <MusicSocials socials={musicSocials} />
+        </div>
+        <button class="about-link" data-scroll-to="about-loafykitten" aria-label="About loafykitten">
+            about loafykitten <span class="about-link__arrow">&darr;</span>
+        </button>
+    </section>
+    <Aboutloafykitten />
+</IslandLayout>
+
+<style>
+    .music-shell {
+        display: flex;
+        min-height: 100vh;
+        min-height: 100dvh;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2.5rem;
+        padding: 2rem 1rem;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .about-link {
+        background: rgba(119, 170, 255, 0.06);
+        border: 1px solid rgba(119, 170, 255, 0.2);
+        border-radius: 9999px;
+        color: #7af;
+        font-size: 0.82rem;
+        font-weight: 300;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0.4rem 1.25rem;
+        transition:
+            background 0.3s ease,
+            border-color 0.3s ease,
+            transform 0.2s ease;
+    }
+
+    .about-link:hover {
+        background: rgba(119, 170, 255, 0.12);
+        border-color: rgba(119, 170, 255, 0.4);
+        transform: translateY(2px);
+    }
+
+    .about-link__arrow {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+
+    .about-link:hover .about-link__arrow {
+        transform: translateY(2px);
+    }
+
+    .about-link:focus-visible {
+        outline: 2px solid #7af;
+        outline-offset: 4px;
+        border-radius: 9999px;
+    }
+
+    .music-nav {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .home-link {
+        color: var(--color-loafykitten);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 300;
+        letter-spacing: 0.03em;
+        position: relative;
+        transition:
+            transform 0.2s ease,
+            text-shadow 0.3s ease;
+    }
+
+    .home-link:hover {
+        transform: scale(1.05);
+        text-shadow: 0 0 6px var(--color-loafykitten);
+    }
+
+    .home-link::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 100%;
+        height: 2px;
+        background-color: var(--color-loafykitten);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+    }
+
+    .home-link:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+
+    .home-link:focus-visible {
+        outline: 2px solid var(--color-loafykitten);
+        outline-offset: 4px;
+        border-radius: 2px;
+    }
+
+    @media (max-width: 480px) {
+        .music-shell {
+            padding: 1rem 0.5rem;
+            gap: 1.5rem;
+        }
+    }
+</style>
+
+<script>
+    const scrollContainer = document.querySelector('main')
+    if (scrollContainer) {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        const scrollBehavior = prefersReducedMotion ? 'instant' : 'smooth'
+
+        for (const trigger of document.querySelectorAll<HTMLElement>('[data-scroll-to]')) {
+            trigger.addEventListener('click', () => {
+                const targetId = trigger.dataset.scrollTo
+                if (!targetId) return
+                const target = document.getElementById(targetId)
+                if (!target) return
+                target.scrollIntoView({ behavior: scrollBehavior, block: 'start' })
+            })
+        }
+    }
+</script>

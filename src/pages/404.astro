@@ -1,23 +1,50 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
+import IslandLayout from '@/layouts/IslandLayout.astro'
+import bgLanding from '@/assets/images/bg-landing.jpg'
+import type { BgImageMetadata } from '@/types'
+
+const background: BgImageMetadata = {
+    url: bgLanding,
+    artistMetadata: {
+        artist: 'Pixabay',
+        artistUrl: 'https://pixabay.com/illustrations/cloud-stars-ocean-reflection-5946381/',
+    },
+    pageBg: '#024e50',
+}
 ---
 
-<BaseLayout title="404 not found" activePath={null}>
+<IslandLayout title="404 not found" description="Page not found." bgImageMetadata={background}>
     <section class="not-found">
-        <h2 class="not-found-header">404 not found</h2>
+        <h1>404 not found</h1>
         <p>uhhh... looks like the page you're looking for doesn't exist or something?</p>
         <p>maybe try going back to the <a href="/">homepage</a> or whatever whatever</p>
     </section>
-</BaseLayout>
+</IslandLayout>
 
 <style>
     .not-found {
-        text-align: center;
-        padding: 2rem 0 1rem;
-    }
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-    .not-found p {
-        font-size: 1.15rem;
-        margin-bottom: 0.75rem;
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        p {
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+        }
+
+        a {
+            color: #beef;
+
+            &:hover {
+                color: #ddd;
+            }
+        }
     }
 </style>

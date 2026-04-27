@@ -1,0 +1,109 @@
+---
+import type { BgArtistMetadata } from '@/types/bg-artist-metadata'
+
+interface Props {
+    bgArtistMetadata?: BgArtistMetadata
+}
+
+const { bgArtistMetadata } = Astro.props
+
+const date = new Date().getFullYear()
+const author = {
+    name: 'loafykitten',
+    url: '/',
+}
+
+const blurbs = [
+    `there's no place like 127.0.0.1`,
+    `me += you`,
+    `while (alive) { code(); }`,
+    `sudo rm -rf / --no-preserve-root`,
+    `if (coffee) { code(); }`,
+    `git commit -m "my heart"`,
+    `it works on my machine`,
+]
+
+const socialLinks = [
+    { href: 'https://threads.com/@loafykitten', label: 'Threads' },
+    { href: 'https://bsky.app/profile/loafykitten.cafe', label: 'Bluesky' },
+    { href: 'https://patreon.com/loafykitten', label: 'Patreon' },
+]
+---
+
+<footer>
+    <p>
+        &copy; {date}
+        <a href={author.url} target="_blank" rel="noopener noreferrer">{author.name}</a>
+        {
+            bgArtistMetadata && (
+                <>
+                    {' '}
+                    - background by{' '}
+                    <a href={bgArtistMetadata.artistUrl} target="_blank" rel="noopener noreferrer">
+                        {bgArtistMetadata.artist}
+                    </a>
+                </>
+            )
+        }
+    </p>
+    <p>
+        <small>ヽ(*・ω・)ﾉ {blurbs[Math.floor(Math.random() * blurbs.length)]}</small>
+    </p>
+    <p class="social-links">
+        {
+            socialLinks.map((link) => (
+                <a href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                </a>
+            ))
+        }
+    </p>
+</footer>
+
+<style>
+    footer {
+        background-color: var(--footer-bg, #000a);
+        width: 100%;
+        z-index: 10;
+        padding: 0.25rem 0;
+        padding-bottom: env(safe-area-inset-bottom);
+        text-align: center;
+        font-size: 0.9rem;
+        display: flex;
+        flex-direction: column;
+
+        p {
+            padding: 0.15rem 0;
+            transform: translate3d(0, 0, 0);
+            transition: transform 0.3s ease;
+
+            &:hover {
+                color: #fff;
+                transform: translate3d(0, -1px, 0);
+            }
+        }
+
+        a {
+            color: #beef;
+            text-decoration: none;
+        }
+    }
+
+    .social-links {
+        margin-top: 0.25rem;
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+
+        a {
+            color: #7fdbff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+
+            &:hover {
+                color: #7fdbffcc;
+            }
+        }
+    }
+</style>

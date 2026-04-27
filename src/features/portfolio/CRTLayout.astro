@@ -1,0 +1,243 @@
+---
+import { getCrtBgStyle } from '@/features/portfolio/crt-theme'
+import IslandLayout from '@/layouts/IslandLayout.astro'
+
+interface Props {
+    title: string
+    description: string
+    prompt: string
+    fileLabel: string
+    fileSublabel?: string
+}
+
+const { title, description, prompt, fileLabel, fileSublabel } = Astro.props
+const bgStyle = getCrtBgStyle('green', true)
+const currentPath = Astro.url.pathname
+
+const navLinks = [
+    { href: '/', label: 'home' },
+    { href: '/portfolio', label: 'portfolio' },
+    { href: '/portfolio/projects', label: 'projects' },
+]
+---
+
+<IslandLayout title={title} description={description} bgStyle={bgStyle}>
+    <section class="crt-page">
+        <nav>
+            {
+                navLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        class:list={[
+                            { active: currentPath === link.href || currentPath === `${link.href}/` },
+                            { home: link.href === '/' },
+                        ]}
+                    >
+                        {link.label}
+                    </a>
+                ))
+            }
+        </nav>
+
+        <article class="terminal-file">
+            <header class="file-header">
+                <p class="prompt"><span class="cursor-blink">&gt;</span> {prompt}</p>
+                <hr class="divider" />
+                <p class="file-label">{fileLabel}</p>
+                {fileSublabel && <p class="file-sublabel">{fileSublabel}</p>}
+            </header>
+
+            <slot />
+
+            <footer class="file-footer">
+                <hr class="divider" />
+                <p class="eof">[EOF]</p>
+            </footer>
+        </article>
+    </section>
+</IslandLayout>
+
+<style>
+    :global(footer) {
+        font-family: 'Fira Code', monospace;
+    }
+
+    .crt-page {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+        padding: 2rem;
+        padding-bottom: 2rem;
+        font-family: 'Fira Code', monospace;
+        animation: fadeInUp 0.5s ease forwards;
+    }
+
+    nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+
+        a {
+            color: #ddd;
+            text-decoration: none;
+            font-size: 1.1rem;
+            position: relative;
+            transform: translate3d(0, 0, 0);
+            transition:
+                transform 0.3s ease,
+                color 0.3s ease;
+
+            &:hover {
+                color: #fff;
+                transform: translateY(-2px);
+            }
+
+            &.active {
+                color: #0f0;
+                text-shadow: 0 0 4px #0f0;
+            }
+
+            &.home {
+                color: var(--color-loafykitten);
+                text-shadow: 0 0 4px var(--color-loafykitten);
+
+                &:hover {
+                    color: #fff;
+                    text-shadow: 0 0 6px var(--color-loafykitten);
+                }
+            }
+        }
+    }
+
+    .terminal-file {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: left;
+    }
+
+    .file-header {
+        text-align: left;
+
+        .prompt {
+            font-size: 0.9rem;
+            color: #0f0;
+        }
+
+        .file-label {
+            font-size: 1rem;
+            color: #6b6;
+            letter-spacing: 0.2em;
+            text-align: center;
+        }
+
+        .file-sublabel {
+            font-size: 0.75rem;
+            color: #494;
+            text-align: center;
+        }
+    }
+
+    .cursor-blink {
+        color: #0f0;
+        animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+        50% {
+            opacity: 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .cursor-blink {
+            animation: none;
+        }
+    }
+
+    .divider {
+        border: none;
+        border-top: 1px dashed #2a5a2a;
+        margin: 0.5rem 0;
+    }
+
+    :global(.section h2) {
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: #5a5;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+        border-bottom: 1px solid #1a3a1a;
+        padding-bottom: 0.25rem;
+    }
+
+    :global(.link-cyan) {
+        color: #7fdbff;
+        text-decoration: none;
+        text-shadow: 0 0 4px #7fdbff;
+    }
+
+    :global(.skill-tags) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    :global(.skill-tags li) {
+        background-color: #0f02;
+        border: 1px solid #2a5a2a;
+        padding: 0.2rem 0.6rem;
+        border-radius: 2px;
+        font-size: 0.8rem;
+        color: #8b8;
+        transform: translate3d(0, 0, 0);
+        transition:
+            background-color 0.3s ease,
+            transform 0.3s ease,
+            color 0.3s ease;
+    }
+
+    :global(.skill-tags li:hover) {
+        background-color: #0f04;
+        transform: translateY(-2px);
+        color: #bfb;
+    }
+
+    .file-footer {
+        .eof {
+            text-align: center;
+            color: #494;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .crt-page {
+            padding: 1.25rem;
+            padding-bottom: 1.25rem;
+            gap: 1.5rem;
+        }
+
+        nav {
+            gap: 0.75rem;
+            flex-wrap: wrap;
+
+            a {
+                font-size: 0.95rem;
+            }
+        }
+    }
+</style>

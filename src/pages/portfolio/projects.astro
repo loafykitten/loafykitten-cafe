@@ -1,0 +1,185 @@
+---
+import CRTLayout from '@/features/portfolio/CRTLayout.astro'
+---
+
+<CRTLayout
+    title="projects"
+    description="Featured projects by Ember — real-time speech detection, game modding, and web frameworks."
+    prompt="cat /users/a.ember/projects.dat"
+    fileLabel="PROJECT FILES — FEATURED"
+    fileSublabel="3 entries found"
+>
+    <section class="section intro">
+        <h2>// FEATURED PROJECTS</h2>
+        <p>
+            A curated selection of my most notable work. For the full catalog, see my <a
+                class="link-cyan"
+                href="https://github.com/loafykitten"
+                target="_blank"
+                rel="noopener noreferrer">GitHub</a
+            >.
+        </p>
+    </section>
+
+    <section class="section projects">
+        <h2>// PROJECT FILES</h2>
+
+        <div class="project-list">
+            <div class="project-entry">
+                <div class="project-header">
+                    <div class="project-name">Swear Jar</div>
+                    <div class="project-date">Jan 2026</div>
+                </div>
+                <div class="project-tagline">Real-Time Speech Detection + Live Web Widget</div>
+                <p class="project-desc">
+                    Two-component system: a web service with API and WebSocket broadcasting for a live widget, paired
+                    with a Python speech detection client powered by Whisper. Pipeline flows from audio capture through
+                    Whisper transcription, profanity detection, API event dispatch, WebSocket broadcast, to live UI
+                    update.
+                </p>
+                <ul class="skill-tags">
+                    <li>Python</li>
+                    <li>TypeScript</li>
+                </ul>
+                <a
+                    class="project-link"
+                    href="https://github.com/loafykitten/swear-jar"
+                    target="_blank"
+                    rel="noopener noreferrer">&gt; view project</a
+                >
+            </div>
+
+            <div class="project-entry">
+                <div class="project-header">
+                    <div class="project-name">Elden Ring: Classes Expanded</div>
+                    <div class="project-date">Jan 2026 &mdash; Present</div>
+                </div>
+                <div class="project-tagline">Game Modification for AAA FromSoftware Title</div>
+                <p class="project-desc">
+                    Reverse-engineered game architecture to create custom weapon variants and a modular mod structure
+                    using Mod Engine 3. Features two original character archetypes &mdash; Abysswalker and Bestia
+                    &mdash; each with unique starting builds and equipment.
+                </p>
+                <ul class="skill-tags">
+                    <li>Mod Engine 3</li>
+                    <li>Git</li>
+                    <li>Game Asset Modification</li>
+                </ul>
+                <a
+                    class="project-link"
+                    href="https://github.com/loafykitten/er-modding"
+                    target="_blank"
+                    rel="noopener noreferrer">&gt; view project</a
+                >
+            </div>
+
+            <div class="project-entry">
+                <div class="project-header">
+                    <div class="project-name">Transgress</div>
+                    <div class="project-date">Sep 2024 &mdash; Present</div>
+                </div>
+                <div class="project-tagline">TypeScript-First Web Server Framework for Bun</div>
+                <p class="project-desc">
+                    HTTP routing, middleware pipeline, custom logger, WebSocket support, and HTML templating. Published
+                    as
+                    <a
+                        class="link-cyan"
+                        href="https://www.npmjs.com/package/@loafykitten/transgress"
+                        target="_blank"
+                        rel="noopener noreferrer">@loafykitten/transgress</a
+                    >
+                    on npm. A learning project exploring web framework fundamentals from the ground up.
+                </p>
+                <ul class="skill-tags">
+                    <li>TypeScript</li>
+                </ul>
+                <a
+                    class="project-link"
+                    href="https://github.com/loafykitten/transgress"
+                    target="_blank"
+                    rel="noopener noreferrer">&gt; view project</a
+                >
+            </div>
+        </div>
+    </section>
+</CRTLayout>
+
+<style>
+    .intro {
+        p {
+            line-height: 1.5;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+    }
+
+    .project-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .project-entry {
+        border-left: 2px solid #2a5a2a;
+        padding-left: 1rem;
+    }
+
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .project-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ddd;
+    }
+
+    .project-date {
+        font-size: 0.75rem;
+        color: #5a5;
+    }
+
+    .project-tagline {
+        font-size: 0.85rem;
+        color: #5a5;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-desc {
+        font-size: 0.8rem;
+        color: #888;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-link {
+        display: inline-block;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+        color: #7fdbff;
+        text-decoration: none;
+        text-shadow: 0 0 4px #7fdbff44;
+        transform: translate3d(0, 0, 0);
+        transition:
+            text-shadow 0.3s ease,
+            transform 0.3s ease,
+            letter-spacing 0.3s ease;
+
+        &:hover {
+            text-shadow: 0 0 6px #7fdbff;
+            transform: translateY(-2px);
+            letter-spacing: 0.05em;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .project-header {
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+    }
+</style>

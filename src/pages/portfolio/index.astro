@@ -1,0 +1,100 @@
+---
+import aspectEmber from '@/assets/images/aspect-ember.png'
+import CRTLayout from '@/features/portfolio/CRTLayout.astro'
+import { Image } from 'astro:assets'
+---
+
+<CRTLayout
+    title="portfolio"
+    description="Ember — Senior Mobile Engineer and Game Server Engineer. Projects, experience, and more."
+    prompt="cat /users/a.ember/overview.dat"
+    fileLabel="DOSSIER — OVERVIEW"
+>
+    <section class="section author">
+        <Image src={aspectEmber} alt="ember headshot" />
+        <div class="author-info">
+            <h1 class="name">Ember</h1>
+            <div class="author-role">
+                <p>Senior Mobile Eng.</p>
+                <p>Game Server Eng.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section biography">
+        <h2>// ABOUT</h2>
+        <p>
+            Hiii! I specialize in mobile &amp; game server development. I build across mobile, backend, and game
+            server work.
+        </p>
+        <p>
+            With a decade+ of experience in the industry, I've contributed to projects from B2B software to indie games.
+        </p>
+        <p>
+            When I'm not working or studying, I'm grinding my projects, my lofi, or gaming. All live as <a
+                href="/vtuber"
+                class="link-loafykitten">loafykitten</a
+            >!
+        </p>
+    </section>
+</CRTLayout>
+
+<style>
+    .author {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+
+        img {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #ddd1;
+            transform: translate3d(0, 0, 0);
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: translateY(-2px);
+            }
+        }
+    }
+
+    .author-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .name {
+            font-size: 1.5rem;
+            color: #ddd;
+        }
+    }
+
+    .author-role {
+        p {
+            margin: 0.25rem 0 0;
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: #ddd;
+        }
+    }
+
+    .biography {
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        .link-loafykitten {
+            color: var(--color-loafykitten);
+            text-decoration: none;
+            text-shadow: 0 0 4px var(--color-loafykitten);
+        }
+    }
+</style>

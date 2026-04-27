@@ -1,0 +1,470 @@
+---
+import type { ClientSongData } from './music-data'
+
+interface Props {
+    songs: ClientSongData[]
+}
+
+const { songs } = Astro.props
+---
+
+<div class="carousel-wrapper" data-song-count={songs.length}>
+    <button class="carousel__arrow carousel__arrow--prev" aria-label="Previous cassette">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="carousel">
+        {songs.map((song) => (
+            <button
+                class="cassette"
+                data-song-index={song.index}
+                data-href={song.href}
+                data-album-art={song.albumArtSrc}
+                data-song-title={song.title}
+                data-album-name={song.albumName}
+                data-odesli-href={song.odesliHref}
+                aria-label={`Load ${song.title} from ${song.albumName}`}
+            >
+                <div class="cassette__body">
+                    <div class="cassette__screw cassette__screw--tl"></div>
+                    <div class="cassette__screw cassette__screw--tr"></div>
+                    <div class="cassette__label">
+                        <img
+                            src={song.albumArtSrc}
+                            alt=""
+                            class="cassette__art"
+                            loading="lazy"
+                        />
+                        <div class="cassette__text">
+                            <span class="cassette__title"><span class="cassette__title-inner">{song.title}</span></span>
+                            <span class="cassette__album"><span class="cassette__album-inner">{song.albumName}</span></span>
+                        </div>
+                    </div>
+                    <div class="cassette__window">
+                        <div class="cassette__reel cassette__reel--left">
+                            <div class="cassette__hub"></div>
+                        </div>
+                        <div class="cassette__tape-strip"></div>
+                        <div class="cassette__reel cassette__reel--right">
+                            <div class="cassette__hub"></div>
+                        </div>
+                    </div>
+                    <div class="cassette__screw cassette__screw--bl"></div>
+                    <div class="cassette__screw cassette__screw--br"></div>
+                </div>
+            </button>
+        ))}
+    </div>
+    <button class="carousel__arrow carousel__arrow--next" aria-label="Next cassette">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+</div>
+
+<style>
+    .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 620px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .carousel {
+        position: relative;
+        height: 125px;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    /* ── Arrows ── */
+    .carousel__arrow {
+        flex-shrink: 0;
+        width: 2rem;
+        height: 2.5rem;
+        border: 1px solid rgba(119, 170, 255, 0.15);
+        border-radius: 0.5rem;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        color: #7af;
+        cursor: pointer;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease;
+
+        &:hover {
+            background: rgba(119, 170, 255, 0.12);
+            border-color: rgba(119, 170, 255, 0.3);
+        }
+
+        &:active {
+            transform: scale(0.93);
+        }
+
+        &:focus-visible {
+            outline: 2px solid #7af;
+            outline-offset: 2px;
+        }
+    }
+
+    /* ── Cassette button reset ── */
+    .cassette {
+        all: unset;
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transition:
+            left 0.4s ease,
+            transform 0.4s ease,
+            opacity 0.4s ease,
+            visibility 0.4s ease;
+        will-change: left, transform, opacity;
+        transform-origin: center center;
+        outline-offset: 4px;
+
+        &:focus-visible {
+            outline: 2px solid #7af;
+        }
+    }
+
+    /* ── Cassette body ── */
+    .cassette__body {
+        position: relative;
+        width: 180px;
+        height: 115px;
+        background: linear-gradient(165deg, #1c2740 0%, #131b2e 100%);
+        border: 1px solid rgba(119, 170, 255, 0.1);
+        border-radius: 8px 8px 5px 5px;
+        box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        transition:
+            box-shadow 0.3s ease,
+            border-color 0.3s ease;
+        overflow: hidden;
+    }
+
+    .cassette[data-active] .cassette__body {
+        border-color: rgba(119, 170, 255, 0.4);
+        box-shadow:
+            0 4px 20px rgba(0, 0, 0, 0.5),
+            0 0 24px rgba(119, 170, 255, 0.12);
+    }
+
+    /* ── Screws ── */
+    .cassette__screw {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #3a4560, #1a2030);
+        border: 0.5px solid rgba(255, 255, 255, 0.06);
+        z-index: 2;
+    }
+    .cassette__screw--tl { top: 5px; left: 5px; }
+    .cassette__screw--tr { top: 5px; right: 5px; }
+    .cassette__screw--bl { bottom: 5px; left: 5px; }
+    .cassette__screw--br { bottom: 5px; right: 5px; }
+
+    /* ── Label area ── */
+    .cassette__label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 10px 14px 0;
+        padding: 6px 8px;
+        background: linear-gradient(135deg, rgba(255, 200, 120, 0.08) 0%, rgba(119, 170, 255, 0.05) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+    }
+
+    .cassette__art {
+        width: 34px;
+        height: 34px;
+        border-radius: 3px;
+        object-fit: cover;
+        border: 1px solid rgba(119, 170, 255, 0.15);
+        flex-shrink: 0;
+    }
+
+    .cassette__text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+
+    .cassette__title {
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: #c8daf0;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        transition: color 0.3s ease;
+    }
+
+    .cassette__title-inner,
+    .cassette__album-inner {
+        display: inline-block;
+    }
+
+    /* Marquee on active cassette when text overflows */
+    .cassette[data-active] [data-overflow] .cassette__title-inner,
+    .cassette[data-active] [data-overflow] .cassette__album-inner {
+        animation: marquee var(--marquee-duration, 5s) linear infinite;
+        animation-delay: 1.5s;
+    }
+
+    @keyframes marquee {
+        0%, 15% { transform: translateX(0); }
+        45%, 70% { transform: translateX(var(--marquee-offset, -40px)); }
+        100% { transform: translateX(0); }
+    }
+
+    .cassette[data-active] .cassette__title {
+        color: #7af;
+    }
+
+    .cassette__album {
+        font-size: 0.58rem;
+        font-weight: 300;
+        color: rgba(200, 210, 230, 0.45);
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    /* ── Tape window ── */
+    .cassette__window {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        margin: 6px 20px 0;
+        padding: 4px 10px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 3px 3px 12px 12px;
+        position: relative;
+    }
+
+    /* ── Reels ── */
+    .cassette__reel {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 40% 35%, #2a3550 0%, #151d30 60%, #0d1220 100%);
+        border: 1px solid rgba(119, 170, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: border-color 0.3s ease;
+    }
+
+    .cassette__hub {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 35% 35%, #3a4a6a, #1a2540);
+        border: 0.5px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .cassette__tape-strip {
+        flex: 1;
+        height: 2px;
+        background: rgba(119, 170, 255, 0.08);
+        margin: 0 4px;
+    }
+
+    /* ── Playing state: spinning reels ── */
+    .cassette[data-playing] .cassette__reel {
+        animation: reel-spin 1.8s linear infinite;
+        border-color: rgba(119, 170, 255, 0.2);
+    }
+
+    .cassette[data-playing] .cassette__reel--left {
+        animation-duration: 2.2s;
+    }
+
+    .cassette[data-playing] .cassette__body {
+        border-color: rgba(119, 170, 255, 0.35);
+    }
+
+    .cassette[data-playing] .cassette__title {
+        color: #7af;
+    }
+
+    @keyframes reel-spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+        .carousel__arrow {
+            width: 1.5rem;
+            height: 2rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .cassette[data-playing] .cassette__reel {
+            animation: none;
+        }
+
+        .cassette {
+            transition: none;
+        }
+
+        .cassette[data-active] [data-overflow] .cassette__title-inner,
+        .cassette[data-active] [data-overflow] .cassette__album-inner {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    const wrapper = document.querySelector<HTMLElement>('.carousel-wrapper')
+    const container = document.querySelector<HTMLElement>('.carousel')
+    if (!wrapper || !container) throw new Error('Missing .carousel')
+
+    const cassettes = [...container.querySelectorAll<HTMLElement>('.cassette')]
+    const total = cassettes.length
+    const prevBtn = wrapper.querySelector<HTMLButtonElement>('.carousel__arrow--prev')
+    const nextBtn = wrapper.querySelector<HTMLButtonElement>('.carousel__arrow--next')
+    const CASSETTE_W = 180
+    const GAP = 16
+    const STEP = CASSETTE_W + GAP
+    let activeIndex = 0
+
+    // Detect text overflow and set marquee data attributes
+    const setupMarquee = () => {
+        for (const cassette of cassettes) {
+            for (const selector of ['.cassette__title', '.cassette__album']) {
+                const outer = cassette.querySelector<HTMLElement>(selector)
+                const inner = outer?.firstElementChild as HTMLElement | null
+                if (!outer || !inner) continue
+                const overflow = inner.scrollWidth - outer.clientWidth
+                if (overflow > 2) {
+                    outer.setAttribute('data-overflow', '')
+                    outer.style.setProperty('--marquee-offset', `-${overflow + 10}px`)
+                } else {
+                    outer.removeAttribute('data-overflow')
+                }
+            }
+        }
+    }
+
+    // Position all cassettes — only center + immediate neighbors visible
+    const positionCassettes = () => {
+        const containerW = container.offsetWidth
+        const centerLeft = (containerW - CASSETTE_W) / 2
+
+        for (let i = 0; i < total; i++) {
+            const el = cassettes[i]
+            let diff = i - activeIndex
+            if (diff > total / 2) diff -= total
+            if (diff < -total / 2) diff += total
+
+            const left = centerLeft + diff * STEP
+            const isActive = diff === 0
+            const isNeighbor = Math.abs(diff) === 1
+            const scale = isActive ? 1 : 0.88
+            const isVisible = Math.abs(diff) <= 1
+
+            el.style.left = `${left}px`
+            el.style.transform = `translateY(-50%) scale(${scale})`
+            el.style.opacity = isVisible ? (isActive ? '1' : '0.5') : '0'
+            el.style.visibility = isVisible ? 'visible' : 'hidden'
+            el.style.zIndex = isActive ? '2' : isNeighbor ? '1' : '0'
+            el.style.pointerEvents = isActive ? 'auto' : 'none'
+
+            el.toggleAttribute('data-active', isActive)
+        }
+    }
+
+    window.addEventListener('resize', positionCassettes)
+
+    const navigateTo = (index: number) => {
+        activeIndex = ((index % total) + total) % total
+        positionCassettes()
+        loadActive()
+    }
+
+    const loadActive = () => {
+        document.dispatchEvent(new CustomEvent('cassette:load', {
+            detail: { songIndex: activeIndex }
+        }))
+    }
+
+    // Initialize
+    positionCassettes()
+    setupMarquee()
+    // Defer so all component scripts have registered their listeners
+    setTimeout(loadActive, 0)
+
+    // Arrow navigation
+    prevBtn?.addEventListener('click', () => navigateTo(activeIndex - 1))
+    nextBtn?.addEventListener('click', () => navigateTo(activeIndex + 1))
+
+    // Click centered cassette to load it
+    for (const cassette of cassettes) {
+        cassette.addEventListener('click', () => {
+            const index = Number(cassette.dataset.songIndex)
+            if (index === activeIndex) loadActive()
+        })
+    }
+
+    // Touch swipe support
+    let touchStartX = 0
+    let touchDelta = 0
+    const SWIPE_THRESHOLD = 40
+
+    wrapper.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX
+        touchDelta = 0
+    }, { passive: true })
+
+    wrapper.addEventListener('touchmove', (e) => {
+        touchDelta = e.touches[0].clientX - touchStartX
+    }, { passive: true })
+
+    wrapper.addEventListener('touchend', () => {
+        if (Math.abs(touchDelta) > SWIPE_THRESHOLD) {
+            navigateTo(activeIndex + (touchDelta < 0 ? 1 : -1))
+        }
+    })
+
+    // Keyboard navigation
+    wrapper.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault()
+            navigateTo(activeIndex - 1)
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault()
+            navigateTo(activeIndex + 1)
+        } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            loadActive()
+        }
+    })
+
+    // Listen for playback state changes from the deck
+    document.addEventListener('cassette:statechange', ((e: CustomEvent) => {
+        const { songIndex, state } = e.detail
+        for (const c of cassettes) {
+            const isThis = Number(c.dataset.songIndex) === songIndex
+            c.toggleAttribute('data-playing', isThis && state === 'playing')
+        }
+    }) as EventListener)
+
+    // Listen for external navigation requests (from deck skip/rewind)
+    document.addEventListener('cassette:navigate', ((e: CustomEvent) => {
+        navigateTo(e.detail.songIndex)
+    }) as EventListener)
+</script>

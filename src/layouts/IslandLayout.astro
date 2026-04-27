@@ -1,0 +1,121 @@
+---
+import Footer from '@/components/Footer.astro'
+import '@/styles/global.css'
+import type { BgImageMetadata, BgStyle } from '@/types'
+import { getImage } from 'astro:assets'
+
+interface Props {
+    title: string
+    description?: string
+    bgImageMetadata?: BgImageMetadata
+    bgStyle?: BgStyle
+}
+
+const { title, description, bgImageMetadata, bgStyle } = Astro.props
+
+const pageTitle = `${title} | loafykitten`
+const optimizedBg = bgImageMetadata
+    ? await getImage({ src: bgImageMetadata.url, format: 'webp', width: 1920, quality: 70 })
+    : null
+const bgImage = optimizedBg ? `url(${optimizedBg.src})` : 'none'
+const stylePropsText = bgStyle ? Object.entries(bgStyle.varProps).map(([key, value]) => `--${key}: ${value};`).join(' ') : ''
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Fira+Code:wght@300..700&display=swap"
+        />
+        {description && <meta name="description" content={description} />}
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        {optimizedBg && <link rel="preload" href={optimizedBg.src} as="image" type="image/webp" fetchpriority="high" />}
+        <title>{pageTitle}</title>
+    </head>
+    <body style={optimizedBg ? `--bg-image: ${bgImage}; --page-bg: ${bgImageMetadata?.pageBg}` : `${stylePropsText}`}>
+        {optimizedBg && (
+            <div class="page-bg" aria-hidden="true">
+                <div class="page-bg__image"></div>
+            </div>
+        )}
+        <div class="site-shell">
+            <main>
+                <slot />
+            </main>
+            <Footer bgArtistMetadata={bgImageMetadata?.artistMetadata} />
+        </div>
+    </body>
+</html>
+
+{optimizedBg &&
+    <style>
+        body {
+            background-color: var(--page-bg);
+            text-align: center;
+        }
+
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-bg__image {
+            position: absolute;
+            inset: -1.25rem;
+            background-image:
+                linear-gradient(to bottom, var(--page-bg) 0%, transparent 25%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='4' stitchTiles='stitch' /%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23noise)' opacity='0.2' /%3E%3C/svg%3E"),
+                var(--bg-image);
+            background-size:
+                100% 100%,
+                180px 180px,
+                cover;
+            background-position:
+                top center,
+                top left,
+                center;
+            background-repeat: no-repeat, repeat, no-repeat;
+            background-blend-mode: normal, overlay, normal;
+            filter: blur(5px);
+            transform: scale(1.03) translateZ(0);
+            transform-origin: center;
+            will-change: transform;
+        }
+    </style>
+}
+
+{ bgStyle &&
+    <style set:html={bgStyle.style} />
+}
+
+<style>
+    .site-shell {
+        position: relative;
+        z-index: 1;
+        height: 100vh;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+    }
+</style>

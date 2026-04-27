@@ -1,0 +1,155 @@
+<div class="aspect-card-selection-wrapper">
+    <div class="aspect-card-selection">
+        <slot />
+    </div>
+    <button class="aspect-card-selection__arrow aspect-card-selection__arrow--prev" aria-label="Previous card">‹</button
+    >
+    <button class="aspect-card-selection__arrow aspect-card-selection__arrow--next" aria-label="Next card">›</button>
+</div>
+
+<style>
+    .aspect-card-selection-wrapper {
+        position: relative;
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .aspect-card-selection {
+        display: flex;
+        gap: 5rem;
+        justify-content: center;
+    }
+
+    .aspect-card-selection__arrow {
+        display: none;
+    }
+
+    @media (max-width: 900px) {
+        .aspect-card-selection {
+            gap: 2rem;
+        }
+    }
+
+    @media (hover: none) {
+        .aspect-card-selection {
+            justify-content: flex-start;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            touch-action: pan-x;
+            scrollbar-width: none;
+            padding-inline: calc(50% - 100px);
+            padding-block: 2.5rem;
+            gap: 2rem;
+        }
+
+        .aspect-card-selection::-webkit-scrollbar {
+            display: none;
+        }
+
+        .aspect-card-selection__arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2rem;
+            height: 3rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 3;
+            transition: opacity 0.3s;
+        }
+
+        .aspect-card-selection__arrow--prev {
+            left: 0.5rem;
+        }
+
+        .aspect-card-selection__arrow--next {
+            right: 0.5rem;
+        }
+
+        .aspect-card-selection__arrow[data-hidden] {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+</style>
+
+<script>
+    const noHover = window.matchMedia('(hover: none)')
+
+    if (noHover.matches) {
+        const container = document.querySelector<HTMLElement>('.aspect-card-selection')
+        const wrapper = document.querySelector<HTMLElement>('.aspect-card-selection-wrapper')
+        if (!container || !wrapper) throw new Error('Missing .aspect-card-selection')
+
+        const landing = container.closest<HTMLElement>('.landing')
+        const cards = [...container.querySelectorAll<HTMLElement>('.aspect-card')]
+        const prevBtn = wrapper.querySelector<HTMLButtonElement>('.aspect-card-selection__arrow--prev')
+        const nextBtn = wrapper.querySelector<HTMLButtonElement>('.aspect-card-selection__arrow--next')
+
+        if (!landing || cards.length === 0) throw new Error('Missing .landing or .aspect-card elements')
+
+        let activeIndex = 0
+
+        const setActive = (index: number) => {
+            activeIndex = index
+            const aspect = cards[index]?.dataset.aspect ?? ''
+            landing.dataset.activeAspect = aspect
+
+            for (const [i, c] of cards.entries()) {
+                c.toggleAttribute('data-active', i === index)
+            }
+
+            if (prevBtn) {
+                prevBtn.toggleAttribute('data-hidden', index === 0)
+            }
+            if (nextBtn) {
+                nextBtn.toggleAttribute('data-hidden', index === cards.length - 1)
+            }
+        }
+
+        // Set initial state
+        setActive(0)
+
+        // Observe which card is most visible
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        const idx = cards.indexOf(entry.target as HTMLElement)
+                        if (idx !== -1) setActive(idx)
+                    }
+                }
+            },
+            { root: container, threshold: 0.6 }
+        )
+
+        for (const card of cards) {
+            observer.observe(card)
+        }
+
+        // Arrow button navigation
+        const scrollToCard = (index: number) => {
+            const target = cards[index]
+            if (!target) return
+            target.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+        }
+
+        prevBtn?.addEventListener('click', (e) => {
+            e.stopPropagation()
+            if (activeIndex > 0) scrollToCard(activeIndex - 1)
+        })
+
+        nextBtn?.addEventListener('click', (e) => {
+            e.stopPropagation()
+            if (activeIndex < cards.length - 1) scrollToCard(activeIndex + 1)
+        })
+    }
+</script>

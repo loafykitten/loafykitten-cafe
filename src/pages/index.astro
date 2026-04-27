@@ -1,100 +1,88 @@
 ---
-import AuthorImage from "src/features/author-image/AuthorImage.astro";
-import MusicPlayer from "src/features/music-player/MusicPlayer.astro";
-import VisitorNumber from "src/features/visitor-number/VisitorNumber.astro";
-import BaseLayout from "../layouts/BaseLayout.astro";
+import aspectEmber from '@/assets/images/aspect-ember.png'
+import aspectloafykitten from '@/assets/images/aspect-loafykitten.png'
+import aspectMusic from '@/assets/images/aspect-music.png'
+import bgLanding from '@/assets/images/bg-landing.jpg'
+import AspectBlurb from '@/features/aspects/AspectBlurb.astro'
+import AspectCard from '@/features/aspects/AspectCard.astro'
+import AspectCardSelection from '@/features/aspects/AspectCardSelection.astro'
+import AspectCopyContainer from '@/features/aspects/AspectCopyContainer.astro'
+import AspectGreeting from '@/features/aspects/AspectGreeting.astro'
+import IslandLayout from '@/layouts/IslandLayout.astro'
+import type { BgImageMetadata } from '@/types'
+
+const aspects = [
+    {
+        name: 'loafykitten',
+        href: '/vtuber',
+        imgSrc: aspectloafykitten,
+        greeting: "i'm fenn",
+        blurb: 'twitch! youtube! sometimes!',
+        subBlurb: 'come peek at me (please)',
+    },
+    {
+        name: 'ember',
+        href: '/portfolio',
+        imgSrc: aspectEmber,
+        greeting: "i'm ember",
+        blurb: 'i do backend stuff!',
+        subBlurb: "come see what i'm working on (please)",
+    },
+    {
+        name: 'music',
+        href: '/music',
+        imgSrc: aspectMusic,
+        greeting: "i'm loafykitten",
+        blurb: 'lofi for the whole family!',
+        subBlurb: 'come listen to my noises (please)',
+    },
+]
+
+const background: BgImageMetadata = {
+    url: bgLanding,
+    artistMetadata: {
+        artist: 'Pixabay',
+        artistUrl: 'https://pixabay.com/illustrations/cloud-stars-ocean-reflection-5946381/',
+    },
+    pageBg: '#024e50',
+}
 ---
 
-<BaseLayout title="homepage">
-  <VisitorNumber />
+<IslandLayout
+    title="homepage"
+    description="loafykitten — streamer, software engineer, and lofi artist."
+    bgImageMetadata={background}
+>
+    <section class="landing">
+        <AspectCopyContainer>
+            {aspects.map(({ name, greeting }) => <AspectGreeting aspect={name} greeting={greeting} />)}
+        </AspectCopyContainer>
 
-  <div class="author">
-    <AuthorImage />
+        <AspectCardSelection>
+            {aspects.map(({ name, href, imgSrc }) => <AspectCard aspect={name} href={href} imgSrc={imgSrc} />)}
+        </AspectCardSelection>
 
-    <p class="author-intro">hiii nyaa~ ꨄ︎ i'm ember! Or loafykitten nyaa~! whatever whatever!</p>
-    <p>
-      i'm a 31 year old gal who makes lofi (sometimes other stuff), codes (c#/typescript/swift), and
-      yaps a lot on social media whatever whatever. sometimes i yap on my blog too nyaa!
-    </p>
-    <p>i also love playing elden ring, pokopia, visual novels, ffxiv (when i get the chance)</p>
-    <p>
-      i'm a moderate enthusiast of retro/nostalgia and use a heavily windows 7 themed w10 for my
-      gaming desktop nyaa. i have an ipod mini (gen 1) that has a lot of 00s stuff on it like
-      paramore/a7x/etc
-    </p>
-    <p>oh sometimes i'm live on twitch/youtube btw whatever whatever~</p>
-
-    <nav class="stream-links" aria-label="Streaming links">
-      <a href="https://twitch.tv/loafykitten">[twitch]</a>
-      <a href="https://youtube.com/@loafykitten">[youtube]</a>
-    </nav>
-  </div>
-
-  <p class="music-intro">and for the gentleperson, may i interest you in my lofi perhaps?</p>
-
-  <MusicPlayer audioSrc="/audio/longing.mp3" track="longing" artist="loafykitten" />
-</BaseLayout>
+        <AspectCopyContainer>
+            {
+                aspects.map(({ name, blurb, subBlurb }) => (
+                    <AspectBlurb aspect={name} blurb={blurb} subBlurb={subBlurb} />
+                ))
+            }
+        </AspectCopyContainer>
+    </section>
+</IslandLayout>
 
 <style>
-  .author {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  .author::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-
-  .author p {
-    margin-left: 200px;
-    text-align: left;
-    font-size: 1.2rem;
-    text-align: justify;
-  }
-
-  .author-intro {
-    margin-top: 0;
-  }
-
-  .stream-links {
-    padding: 0;
-    text-align: center;
-  }
-
-  .stream-links a {
-    margin: 0 1rem;
-    font-size: 1.5rem;
-    text-shadow: none;
-  }
-
-  .music-intro {
-    letter-spacing: 0.03em;
-    margin: 2rem auto 0;
-  }
-
-  @media (max-width: 700px) {
-    .visitor-count {
-      margin: 2rem 0;
-      line-height: 1.5;
+    .landing {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
     }
 
-    .author {
-      padding: 1rem 0;
+    @media (hover: none) {
+        .landing {
+            padding-bottom: 5rem;
+        }
     }
-
-    .author p {
-      margin-left: 0;
-      font-size: 1.15rem;
-      text-align: center;
-    }
-
-    .stream-links a {
-      display: inline-block;
-      margin: 0.35rem 0.5rem;
-      font-size: 1.2rem;
-    }
-  }
 </style>

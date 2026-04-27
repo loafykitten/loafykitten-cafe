@@ -1,0 +1,618 @@
+---
+---
+
+<div class="deck">
+    <div class="deck__display">
+        <div class="deck__art-frame">
+            <img class="deck__art" src="" alt="" />
+            <span class="deck__placeholder">select a cassette</span>
+        </div>
+        <div class="deck__meta">
+            <p class="deck__title"></p>
+            <p class="deck__album"></p>
+        </div>
+    </div>
+    <div class="deck__scrubber">
+        <span class="deck__time deck__time--current">0:00</span>
+        <input type="range" class="deck__seek" min="0" max="100" value="0" step="0.1" aria-label="Seek" />
+        <span class="deck__time deck__time--duration">0:00</span>
+    </div>
+    <div class="deck__controls">
+        <button class="deck__btn deck__btn--rewind" aria-label="Previous / Restart" title="Previous / Restart">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                <rect x="1" y="3" width="2.5" height="12" rx="0.5" />
+                <path d="M15 3.5v11a1 1 0 0 1-1.5.86L6.5 9.86a1 1 0 0 1 0-1.72l7-5.5A1 1 0 0 1 15 3.5z" />
+            </svg>
+        </button>
+        <button class="deck__btn deck__btn--stop" aria-label="Stop" title="Stop">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" />
+            </svg>
+        </button>
+        <button class="deck__btn deck__btn--play" aria-label="Play" title="Play">
+            <svg class="deck__icon-play" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M5 3.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 5 3.5z" />
+            </svg>
+            <svg class="deck__icon-pause" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="display:none">
+                <rect x="3" y="2" width="4.5" height="16" rx="1" />
+                <rect x="12.5" y="2" width="4.5" height="16" rx="1" />
+            </svg>
+        </button>
+        <button class="deck__btn deck__btn--ff" aria-label="Next track" title="Next">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                <path d="M3 3.5v11a1 1 0 0 0 1.5.86l7-5.5a1 1 0 0 0 0-1.72l-7-5.5A1 1 0 0 0 3 3.5z" />
+                <rect x="14.5" y="3" width="2.5" height="12" rx="0.5" />
+            </svg>
+        </button>
+    </div>
+    <div class="deck__odesli">
+        <span>stream or buy this album on</span>
+        <a class="deck__odesli-link" href="#" target="_blank" rel="noopener noreferrer">all platforms</a>
+    </div>
+    <audio class="deck__audio" preload="none"></audio>
+</div>
+
+<style>
+    .deck {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(119, 170, 255, 0.12);
+        border-radius: 12px;
+        padding: 1.25rem;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        animation: fadeInUp 0.8s ease-out 0.15s backwards;
+        box-sizing: border-box;
+    }
+
+    /* ── Empty state ── */
+    .deck:not([data-loaded]) .deck__controls {
+        opacity: 0.25;
+        pointer-events: none;
+    }
+
+    .deck:not([data-loaded]) .deck__odesli {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .deck:not([data-loaded]) .deck__art {
+        display: none;
+    }
+
+    .deck[data-loaded] .deck__placeholder {
+        display: none;
+    }
+
+    /* ── Display area ── */
+    .deck__display {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 8px;
+        min-height: 56px;
+        transition: opacity 0.2s ease;
+    }
+
+    .deck__art-frame {
+        flex-shrink: 0;
+        width: 52px;
+        height: 52px;
+        border-radius: 4px;
+        border: 1px solid rgba(119, 170, 255, 0.2);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .deck__art {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .deck__placeholder {
+        font-size: 0.55rem;
+        color: rgba(200, 210, 230, 0.3);
+        text-align: center;
+        padding: 4px;
+        line-height: 1.3;
+    }
+
+    .deck__meta {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+    }
+
+    .deck__title {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #c8daf0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.3s ease;
+        letter-spacing: 0.01em;
+    }
+
+    .deck[data-playing] .deck__title {
+        color: #7af;
+    }
+
+    .deck__album {
+        font-size: 0.75rem;
+        font-weight: 300;
+        color: rgba(200, 210, 230, 0.5);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* ── Scrubber ── */
+    .deck__scrubber {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.6rem;
+    }
+
+    .deck:not([data-loaded]) .deck__scrubber {
+        opacity: 0.25;
+        pointer-events: none;
+    }
+
+    .deck__time {
+        font-size: 0.6rem;
+        color: rgba(200, 210, 230, 0.4);
+        min-width: 2.2em;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .deck__seek {
+        flex: 1;
+        height: 4px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .deck__seek::-webkit-slider-runnable-track {
+        height: 4px;
+        border-radius: 2px;
+        background: linear-gradient(
+            to right,
+            rgba(119, 170, 255, 0.5) 0%,
+            rgba(119, 170, 255, 0.5) var(--seek-progress, 0%),
+            rgba(255, 255, 255, 0.08) var(--seek-progress, 0%),
+            rgba(255, 255, 255, 0.08) 100%
+        );
+    }
+
+    .deck__seek::-moz-range-track {
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        border: none;
+    }
+
+    .deck__seek::-moz-range-progress {
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(119, 170, 255, 0.5);
+    }
+
+    .deck__seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #7af;
+        border: none;
+        margin-top: -4px;
+        box-shadow: 0 0 6px rgba(119, 170, 255, 0.3);
+        transition: transform 0.15s ease;
+    }
+
+    .deck__seek::-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #7af;
+        border: none;
+        box-shadow: 0 0 6px rgba(119, 170, 255, 0.3);
+        transition: transform 0.15s ease;
+    }
+
+    .deck__seek:active::-webkit-slider-thumb {
+        transform: scale(1.3);
+    }
+
+    .deck__seek:active::-moz-range-thumb {
+        transform: scale(1.3);
+    }
+
+    /* ── Controls ── */
+    .deck__controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        transition: opacity 0.3s ease;
+    }
+
+    .deck__btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid rgba(119, 170, 255, 0.15);
+        background: rgba(119, 170, 255, 0.06);
+        color: #b8c8e0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.15s ease,
+            color 0.2s ease;
+
+        &:hover {
+            background: rgba(119, 170, 255, 0.12);
+            border-color: rgba(119, 170, 255, 0.3);
+            color: #fff;
+        }
+
+        &:active {
+            transform: scale(0.93);
+        }
+
+        &:focus-visible {
+            outline: 2px solid #7af;
+            outline-offset: 2px;
+        }
+
+        svg {
+            display: block;
+        }
+    }
+
+    .deck__btn--play {
+        width: 48px;
+        height: 48px;
+        border-color: rgba(119, 170, 255, 0.25);
+        background: rgba(119, 170, 255, 0.1);
+    }
+
+    .deck[data-playing] .deck__btn--play {
+        background: rgba(119, 170, 255, 0.18);
+        border-color: rgba(119, 170, 255, 0.45);
+        box-shadow: 0 0 12px rgba(119, 170, 255, 0.15);
+        color: #7af;
+    }
+
+    /* ── Odesli link ── */
+    .deck__odesli {
+        margin-top: 0.6rem;
+        text-align: center;
+        font-size: 0.7rem;
+        color: rgba(200, 210, 230, 0.35);
+        transition: opacity 0.3s ease;
+    }
+
+    .deck__odesli-link {
+        color: #7af;
+        text-decoration: none;
+        margin-left: 0.25rem;
+        position: relative;
+        font-weight: 400;
+
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -1px;
+            width: 100%;
+            height: 1px;
+            background-color: #7af;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        &:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+        .deck {
+            padding: 0.85rem;
+            border-radius: 10px;
+        }
+
+        .deck__display {
+            padding: 0.5rem;
+            gap: 0.6rem;
+        }
+
+        .deck__art-frame {
+            width: 44px;
+            height: 44px;
+        }
+
+        .deck__title {
+            font-size: 0.85rem;
+        }
+
+        .deck__album {
+            font-size: 0.65rem;
+        }
+
+        .deck__scrubber {
+            gap: 0.35rem;
+        }
+
+        .deck__time {
+            font-size: 0.55rem;
+        }
+
+        .deck__controls {
+            gap: 0.4rem;
+        }
+
+        .deck__btn {
+            width: 36px;
+            height: 36px;
+
+            svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        .deck__btn--play {
+            width: 42px;
+            height: 42px;
+
+            svg {
+                width: 17px;
+                height: 17px;
+            }
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .deck {
+            animation: none;
+        }
+    }
+</style>
+
+<script>
+    const deck = document.querySelector<HTMLElement>('.deck')
+    const audio = document.querySelector<HTMLAudioElement>('.deck__audio')
+    const artImg = deck?.querySelector<HTMLImageElement>('.deck__art')
+    const titleEl = deck?.querySelector<HTMLElement>('.deck__title')
+    const albumEl = deck?.querySelector<HTMLElement>('.deck__album')
+    const playBtn = deck?.querySelector<HTMLButtonElement>('.deck__btn--play')
+    const iconPlay = playBtn?.querySelector<SVGElement>('.deck__icon-play')
+    const iconPause = playBtn?.querySelector<SVGElement>('.deck__icon-pause')
+    const stopBtn = deck?.querySelector<HTMLButtonElement>('.deck__btn--stop')
+    const rewindBtn = deck?.querySelector<HTMLButtonElement>('.deck__btn--rewind')
+    const ffBtn = deck?.querySelector<HTMLButtonElement>('.deck__btn--ff')
+    const odesliLink = deck?.querySelector<HTMLAnchorElement>('.deck__odesli-link')
+    const seekBar = deck?.querySelector<HTMLInputElement>('.deck__seek')
+    const timeCurrent = deck?.querySelector<HTMLElement>('.deck__time--current')
+    const timeDuration = deck?.querySelector<HTMLElement>('.deck__time--duration')
+
+    if (!deck || !audio || !artImg || !titleEl || !albumEl || !playBtn || !iconPlay || !iconPause || !stopBtn || !rewindBtn || !ffBtn || !odesliLink || !seekBar || !timeCurrent || !timeDuration) {
+        throw new Error('Missing deck elements')
+    }
+
+    // Build song list from carousel data attributes
+    type Song = { index: number; title: string; albumName: string; albumArtSrc: string; href: string; odesliHref: string }
+    const songs: Song[] = [...document.querySelectorAll<HTMLElement>('.cassette')].map((el) => ({
+        index: Number(el.dataset.songIndex),
+        title: el.dataset.songTitle ?? '',
+        albumName: el.dataset.albumName ?? '',
+        albumArtSrc: el.dataset.albumArt ?? '',
+        href: el.dataset.href ?? '',
+        odesliHref: el.dataset.odesliHref ?? '',
+    }))
+
+    let currentIndex: number | null = null
+    let isPlaying = false
+
+    const dispatchState = (state: 'playing' | 'paused' | 'stopped') => {
+        if (currentIndex === null) return
+        document.dispatchEvent(new CustomEvent('cassette:statechange', {
+            detail: { songIndex: currentIndex, state }
+        }))
+    }
+
+    const navigateCarousel = (songIndex: number) => {
+        document.dispatchEvent(new CustomEvent('cassette:navigate', {
+            detail: { songIndex }
+        }))
+    }
+
+    const updatePlayButton = () => {
+        iconPlay.style.display = isPlaying ? 'none' : ''
+        iconPause.style.display = isPlaying ? '' : 'none'
+        playBtn.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play')
+        playBtn.setAttribute('title', isPlaying ? 'Pause' : 'Play')
+        deck.toggleAttribute('data-playing', isPlaying)
+    }
+
+    const loadSong = (index: number) => {
+        const song = songs.find(s => s.index === index)
+        if (!song) return
+
+        const wasPlaying = isPlaying && currentIndex !== null
+        currentIndex = index
+
+        // Update display
+        artImg.src = song.albumArtSrc
+        artImg.alt = song.albumName
+        titleEl.textContent = song.title
+        albumEl.textContent = song.albumName
+        odesliLink.href = song.odesliHref
+        deck.setAttribute('data-loaded', '')
+
+        // Load audio
+        audio.src = song.href
+        audio.load()
+
+        if (wasPlaying) {
+            audio.play().catch(() => {})
+        } else {
+            isPlaying = false
+            updatePlayButton()
+            dispatchState('paused')
+        }
+    }
+
+    // ── Controls ──
+    playBtn.addEventListener('click', () => {
+        if (currentIndex === null) return
+        if (isPlaying) {
+            audio.pause()
+        } else {
+            audio.play().catch(() => {})
+        }
+    })
+
+    stopBtn.addEventListener('click', () => {
+        if (currentIndex === null) return
+        audio.pause()
+        audio.currentTime = 0
+        isPlaying = false
+        updatePlayButton()
+        dispatchState('stopped')
+    })
+
+    rewindBtn.addEventListener('click', () => {
+        if (currentIndex === null || songs.length === 0) return
+        if (audio.currentTime <= 3) {
+            // Go to previous cassette (wrapping)
+            const prevIndex = ((currentIndex - 1) + songs.length) % songs.length
+            navigateCarousel(prevIndex)
+            loadSong(prevIndex)
+            if (isPlaying) audio.play().catch(() => {})
+        } else {
+            audio.currentTime = 0
+        }
+    })
+
+    ffBtn.addEventListener('click', () => {
+        if (currentIndex === null || songs.length === 0) return
+        const nextIndex = (currentIndex + 1) % songs.length
+        navigateCarousel(nextIndex)
+        loadSong(nextIndex)
+        if (isPlaying) audio.play().catch(() => {})
+    })
+
+    // ── Audio events ──
+    audio.addEventListener('play', () => {
+        isPlaying = true
+        updatePlayButton()
+        dispatchState('playing')
+    })
+
+    audio.addEventListener('pause', () => {
+        if (audio.currentTime === 0 && !audio.seeking) return // ignore stop-triggered pause
+        isPlaying = false
+        updatePlayButton()
+        dispatchState('paused')
+    })
+
+    audio.addEventListener('ended', () => {
+        // Auto-advance (wrapping)
+        if (currentIndex !== null) {
+            const nextIndex = (currentIndex + 1) % songs.length
+            navigateCarousel(nextIndex)
+            loadSong(nextIndex)
+            audio.play().catch(() => {})
+        }
+    })
+
+    audio.addEventListener('error', () => {
+        isPlaying = false
+        updatePlayButton()
+        titleEl.textContent = 'failed to load'
+        titleEl.style.color = '#f88'
+        setTimeout(() => {
+            if (currentIndex !== null) {
+                const song = songs.find(s => s.index === currentIndex)
+                if (song) {
+                    titleEl.textContent = song.title
+                    titleEl.style.color = ''
+                }
+            }
+        }, 2000)
+    })
+
+    // ── Scrubber ──
+    const formatTime = (s: number) => {
+        const m = Math.floor(s / 60)
+        const sec = Math.floor(s % 60)
+        return `${m}:${sec.toString().padStart(2, '0')}`
+    }
+
+    let isSeeking = false
+
+    audio.addEventListener('loadedmetadata', () => {
+        timeDuration.textContent = formatTime(audio.duration)
+        seekBar.max = '100'
+        seekBar.value = '0'
+        seekBar.style.setProperty('--seek-progress', '0%')
+        timeCurrent.textContent = '0:00'
+    })
+
+    audio.addEventListener('timeupdate', () => {
+        if (isSeeking || !audio.duration) return
+        const pct = (audio.currentTime / audio.duration) * 100
+        seekBar.value = String(pct)
+        seekBar.style.setProperty('--seek-progress', `${pct}%`)
+        timeCurrent.textContent = formatTime(audio.currentTime)
+    })
+
+    seekBar.addEventListener('input', () => {
+        isSeeking = true
+        const pct = Number(seekBar.value)
+        seekBar.style.setProperty('--seek-progress', `${pct}%`)
+        if (audio.duration) {
+            timeCurrent.textContent = formatTime((pct / 100) * audio.duration)
+        }
+    })
+
+    seekBar.addEventListener('change', () => {
+        if (audio.duration) {
+            audio.currentTime = (Number(seekBar.value) / 100) * audio.duration
+        }
+        isSeeking = false
+    })
+
+    // ── Listen for carousel selections ──
+    document.addEventListener('cassette:load', ((e: CustomEvent) => {
+        loadSong(e.detail.songIndex)
+    }) as EventListener)
+</script>

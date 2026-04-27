@@ -1,0 +1,67 @@
+---
+interface Props {
+    aspect: string
+    greeting: string
+}
+
+const { aspect, greeting } = Astro.props
+const normalizedAspect = aspect.toLowerCase()
+---
+
+<h1
+    class="aspect-greeting"
+    data-aspect={normalizedAspect}
+    style={`--aspect-color: var(--color-${normalizedAspect})`}
+>
+    {greeting}
+</h1>
+
+<style>
+    .aspect-greeting {
+        position: relative;
+        grid-row: 1 / 1;
+        grid-column: 1 / 1;
+        font-size: 2.5rem;
+        text-align: center;
+        opacity: 0;
+        bottom: 0;
+        color: var(--aspect-color);
+        text-shadow: 1px 1px 5px #000;
+        transition:
+            opacity 0.3s,
+            bottom 0.3s;
+    }
+
+    @media (hover: hover) {
+        :global(.landing:has(.aspect-card[data-aspect='loafykitten']:is(:hover, :focus-within)))
+            .aspect-greeting[data-aspect='loafykitten'],
+        :global(.landing:has(.aspect-card[data-aspect='ember']:is(:hover, :focus-within)))
+            .aspect-greeting[data-aspect='ember'],
+        :global(.landing:has(.aspect-card[data-aspect='music']:is(:hover, :focus-within)))
+            .aspect-greeting[data-aspect='music'] {
+            opacity: 1;
+            bottom: 50px;
+        }
+    }
+
+    @media (hover: none) {
+        :global(.landing[data-active-aspect='loafykitten']) .aspect-greeting[data-aspect='loafykitten'],
+        :global(.landing[data-active-aspect='ember']) .aspect-greeting[data-aspect='ember'],
+        :global(.landing[data-active-aspect='music']) .aspect-greeting[data-aspect='music'] {
+            opacity: 1;
+            bottom: 50px;
+        }
+    }
+
+    @media (hover: none) and (max-height: 700px) {
+        .aspect-greeting {
+            font-size: 1.75rem;
+        }
+
+        :global(.landing[data-active-aspect='loafykitten']) .aspect-greeting[data-aspect='loafykitten'],
+        :global(.landing[data-active-aspect='ember']) .aspect-greeting[data-aspect='ember'],
+        :global(.landing[data-active-aspect='music']) .aspect-greeting[data-aspect='music'] {
+            bottom: 30px;
+        }
+    }
+</style>

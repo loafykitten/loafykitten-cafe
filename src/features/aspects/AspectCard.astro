@@ -1,0 +1,391 @@
+---
+import { Image } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+
+interface Props {
+    aspect: string
+    href: string
+    imgSrc: ImageMetadata
+}
+
+const { aspect, href, imgSrc } = Astro.props
+---
+
+<div class="aspect-card" data-aspect={aspect.toLowerCase()}>
+    <div class="aspect-card__content">
+        <a href={href}>
+            <Image src={imgSrc} alt={`${aspect} aspect`} />
+        </a>
+    </div>
+    <div class="aspect-card__particles" aria-hidden="true"></div>
+</div>
+
+<style>
+    .aspect-card {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 0.5rem;
+        aspect-ratio: 1 / 1;
+        height: 200px;
+        overflow: visible;
+        position: relative;
+        isolation: isolate;
+        cursor: pointer;
+        box-shadow: 1px 1px 10px #000;
+        transform: scale(1);
+        transition-property: transform, border-color, box-shadow;
+        transition-duration: 0.3s;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.35),
+                rgba(255, 255, 255, 0.9),
+                rgba(255, 255, 255, 0.35),
+                rgba(255, 255, 255, 0.35)
+            );
+            background-size: 200% 100%;
+            animation: aspect-card-shimmer 4s ease-in-out infinite;
+            z-index: -1;
+            -webkit-mask:
+                linear-gradient(#000, #000) content-box,
+                linear-gradient(#000, #000);
+            -webkit-mask-composite: xor;
+            mask:
+                linear-gradient(#000, #000) content-box,
+                linear-gradient(#000, #000);
+            mask-composite: exclude;
+        }
+
+        &[data-aspect='ember']::before {
+            animation-delay: -1.3s;
+        }
+
+        &[data-aspect='music']::before {
+            animation-delay: -2.6s;
+        }
+
+        &[data-aspect='loafykitten'] {
+            --aspect-glow: var(--color-loafykitten);
+        }
+
+        &[data-aspect='ember'] {
+            --aspect-glow: var(--color-ember);
+        }
+
+        &[data-aspect='music'] {
+            --aspect-glow: var(--color-music);
+        }
+
+        .aspect-card__content {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: calc(0.5rem - 2px);
+        }
+
+        a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: calc(0.5rem - 2px);
+            filter: brightness(55%) blur(1px);
+            transition: filter 0.3s;
+        }
+    }
+
+    .aspect-card__label {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+        padding: 0.15rem 0.6rem;
+        border-radius: 1rem;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        color: white;
+        font-size: 0.75rem;
+        font-family: 'Inter', sans-serif;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    @media (hover: hover) {
+        .aspect-card:hover {
+            transform: scale(1.1);
+            border-color: var(--aspect-glow);
+            box-shadow: 0px 0px 10px 5px var(--aspect-glow);
+        }
+
+        .aspect-card:hover::before {
+            background: linear-gradient(
+                90deg,
+                var(--aspect-glow),
+                color-mix(in srgb, var(--aspect-glow) 60%, white),
+                var(--aspect-glow),
+                var(--aspect-glow)
+            );
+            background-size: 200% 100%;
+            animation: aspect-card-shimmer 1.5s ease-in-out infinite;
+            box-shadow: 0 0 12px 4px var(--aspect-glow);
+        }
+
+        .aspect-card:hover img {
+            filter: brightness(100%) blur(0);
+        }
+    }
+
+    @media (hover: none) {
+        .aspect-card {
+            scroll-snap-align: center;
+            flex-shrink: 0;
+        }
+
+        .aspect-card[data-active] {
+            transform: scale(1.1);
+            border-color: var(--aspect-glow);
+            box-shadow: 0px 0px 10px 5px var(--aspect-glow);
+        }
+
+        .aspect-card[data-active]::before {
+            background: linear-gradient(
+                90deg,
+                var(--aspect-glow),
+                color-mix(in srgb, var(--aspect-glow) 60%, white),
+                var(--aspect-glow),
+                var(--aspect-glow)
+            );
+            background-size: 200% 100%;
+            animation: aspect-card-shimmer 1.5s ease-in-out infinite;
+            box-shadow: 0 0 12px 4px var(--aspect-glow);
+        }
+
+        .aspect-card[data-active] img {
+            filter: brightness(100%) blur(0);
+        }
+    }
+
+    .aspect-card__particles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: visible;
+        z-index: 2;
+    }
+
+    :global(.aspect-card__particle) {
+        position: absolute;
+        left: var(--origin-x);
+        top: var(--origin-y);
+        color: white;
+        font-family: 'Fira Code', monospace;
+        font-size: var(--particle-size, 1rem);
+        font-weight: 700;
+        line-height: 1;
+        opacity: 0;
+        text-shadow: 0 0 8px color-mix(in srgb, var(--aspect-glow) 80%, transparent);
+        transform: translate(-50%, -50%) scale(0.6);
+        animation: aspect-card-particle var(--particle-duration, 900ms) ease-out forwards;
+    }
+
+    @keyframes aspect-card-particle {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.6);
+        }
+
+        15% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 0;
+            transform: translate(calc(-50% + var(--drift-x)), calc(-50% + var(--drift-y)))
+                rotate(var(--particle-rotate)) scale(1);
+        }
+    }
+
+    @keyframes aspect-card-shimmer {
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 200% 50%;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .aspect-card::before {
+            animation: none;
+            background-position: 25% 50%;
+        }
+
+        :global(.aspect-card__particle) {
+            animation: none;
+            opacity: 0;
+        }
+    }
+</style>
+
+<script>
+    const particleChars: Record<string, string[]> = {
+        ember: ['0', '1'],
+        loafykitten: ['☆', '✦', '✧', '♡', '◇', '◈'],
+        music: ['♪', '♫', '♬', '♩'],
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const noHover = window.matchMedia('(hover: none)')
+
+    const randomFrom = (items: string[]) => items[Math.floor(Math.random() * items.length)]
+    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min
+
+    for (const card of document.querySelectorAll<HTMLElement>('.aspect-card')) {
+        const particleLayer = card.querySelector<HTMLElement>('.aspect-card__particles')
+        const aspect = card.dataset.aspect ?? ''
+        const chars = particleChars[aspect] ?? aspect.split('').filter(Boolean)
+
+        if (!particleLayer || chars.length === 0) {
+            continue
+        }
+
+        let hoverEmitterId: number | undefined
+        let idleEmitterId: number | undefined
+        const getSpawnPoint = () => {
+            const width = card.clientWidth
+            const height = card.clientHeight
+            const edge = Math.floor(Math.random() * 4)
+            const inset = 8
+
+            if (edge === 0) {
+                return {
+                    x: randomInRange(inset, width - inset),
+                    y: randomInRange(0, 10),
+                    driftX: randomInRange(-18, 18),
+                    driftY: randomInRange(-38, -18),
+                }
+            }
+
+            if (edge === 1) {
+                return {
+                    x: randomInRange(width - 10, width),
+                    y: randomInRange(inset, height - inset),
+                    driftX: randomInRange(18, 38),
+                    driftY: randomInRange(-18, 18),
+                }
+            }
+
+            if (edge === 2) {
+                return {
+                    x: randomInRange(inset, width - inset),
+                    y: randomInRange(height - 10, height),
+                    driftX: randomInRange(-18, 18),
+                    driftY: randomInRange(18, 38),
+                }
+            }
+
+            return {
+                x: randomInRange(0, 10),
+                y: randomInRange(inset, height - inset),
+                driftX: randomInRange(-38, -18),
+                driftY: randomInRange(-18, 18),
+            }
+        }
+
+        const emitParticle = () => {
+            const particle = document.createElement('span')
+            const spawn = getSpawnPoint()
+            const lifetime = randomInRange(700, 1150)
+
+            particle.className = 'aspect-card__particle'
+            particle.textContent = randomFrom(chars)
+            particle.style.setProperty('--origin-x', `${spawn.x}px`)
+            particle.style.setProperty('--origin-y', `${spawn.y}px`)
+            particle.style.setProperty('--drift-x', `${spawn.driftX}px`)
+            particle.style.setProperty('--drift-y', `${spawn.driftY}px`)
+            particle.style.setProperty('--particle-duration', `${lifetime}ms`)
+            particle.style.setProperty('--particle-rotate', `${randomInRange(-28, 28)}deg`)
+            particle.style.setProperty('--particle-size', `${randomInRange(0.85, 1.25)}rem`)
+
+            particleLayer.appendChild(particle)
+
+            window.setTimeout(() => {
+                particle.remove()
+            }, lifetime)
+        }
+
+        const startIdleEmitter = () => {
+            if (reducedMotion.matches) return
+            if (idleEmitterId) return
+            idleEmitterId = window.setInterval(emitParticle, 2500)
+        }
+
+        const stopIdleEmitter = () => {
+            if (!idleEmitterId) return
+            window.clearInterval(idleEmitterId)
+            idleEmitterId = undefined
+        }
+
+        const startHoverEmitter = () => {
+            if (reducedMotion.matches) return
+            stopIdleEmitter()
+            if (hoverEmitterId) return
+            emitParticle()
+            hoverEmitterId = window.setInterval(emitParticle, 90)
+        }
+
+        const stopHoverEmitter = () => {
+            if (!hoverEmitterId) return
+            window.clearInterval(hoverEmitterId)
+            hoverEmitterId = undefined
+            startIdleEmitter()
+        }
+
+        const checkActive = () => {
+            if (card.hasAttribute('data-active')) {
+                startHoverEmitter()
+            } else {
+                stopHoverEmitter()
+                startIdleEmitter()
+            }
+        }
+
+        if (noHover.matches) {
+            // Mobile: emitter driven by active card state
+            const observer = new MutationObserver(checkActive)
+            observer.observe(card, { attributes: true, attributeFilter: ['data-active'] })
+            window.setTimeout(checkActive, randomInRange(500, 3000))
+        } else {
+            // Desktop: emitter driven by pointer events
+            card.addEventListener('pointerenter', startHoverEmitter)
+            card.addEventListener('pointerleave', stopHoverEmitter)
+            card.addEventListener('pointercancel', stopHoverEmitter)
+
+            // Start idle particles with a randomized delay so cards don't sync
+            window.setTimeout(startIdleEmitter, randomInRange(500, 3000))
+        }
+
+        reducedMotion.addEventListener('change', () => {
+            if (reducedMotion.matches) {
+                stopIdleEmitter()
+                stopHoverEmitter()
+            } else if (noHover.matches) {
+                checkActive()
+            } else {
+                startIdleEmitter()
+            }
+        })
+    }
+</script>
