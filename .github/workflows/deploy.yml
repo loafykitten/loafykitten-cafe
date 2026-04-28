@@ -16,8 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE_NAME: ghcr.io/loafykitten/loafykitten-net
-  COMPOSE_PROJECT_NAME: loafykitten-net
+  IMAGE_NAME: ghcr.io/loafykitten/loafykitten-cafe
+  COMPOSE_PROJECT_NAME: loafykitten-cafe
 
 jobs:
   validate:
@@ -133,17 +133,29 @@ jobs:
           printf '%s' "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
           docker compose --env-file .env -f compose.yaml pull
           docker compose --env-file .env -f compose.yaml up -d --remove-orphans
-
+          
+          healthy=0
           for attempt in $(seq 1 30); do
-            status=$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' loafykitten-net || true)
+            status=$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' loafykitten-cafe || true)
             if [ "$status" = "healthy" ]; then
-              exit 0
+              healthy=1
+              break
             fi
-
+          
             sleep 2
           done
 
+          if [ "$healthy" -eq 1 ]; then
+            for legacy in loafyweb loafykitten-net; do
+              if docker ps -a --format '{{.Names}}' | grep -Fxq "$legacy"; then
+                docker rm -f "$legacy"
+              fi
+            done
+
+            exit 0
+          fi
+          
           docker compose --env-file .env -f compose.yaml ps
-          docker logs --tail 50 loafykitten-net || true
+          docker logs --tail 50 loafykitten-cafe || true
           exit 1
           EOF

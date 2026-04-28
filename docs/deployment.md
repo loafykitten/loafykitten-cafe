@@ -16,14 +16,15 @@ docker network create public-proxy
 
 - A Dockge stack directory ready for this app. Set `DEPLOY_PATH` to that directory in GitHub Actions secrets.
 - A public Caddy stack already running on `80/443` and attached to `public-proxy`.
-- A public Caddy route for the production hostname pointing to `loafykitten-net:80`.
+- A public Caddy route for the production hostname pointing to `loafykitten-cafe:80`.
+- Before the first deploy after this rename, update Caddy away from any old upstream names like `loafyweb` or `loafykitten-net`, because the workflow now cleans up those legacy containers after a healthy deploy.
 - The workflow runner needs normal OpenSSH access to the server over Tailscale. If Tailscale SSH is enabled on the server for tailnet traffic on port `22`, point `SERVER_PORT` at a separate `sshd` port such as `2222`, or use a host/path where standard `sshd` is still reachable.
 
 Example public Caddy route:
 
 ```caddyfile
 example.com {
-    reverse_proxy loafykitten-net:80
+    reverse_proxy loafykitten-cafe:80
 }
 ```
 
@@ -45,10 +46,11 @@ example.com {
 1. Push to `main`.
 2. GitHub Actions runs `bun install --frozen-lockfile`, `bun run check`, and `bun run build`.
 3. If validation passes, Actions builds an `nginx:alpine` image and pushes:
-   - `ghcr.io/loafykitten/loafykitten-net:main`
-   - `ghcr.io/loafykitten/loafykitten-net:sha-<commit>`
+   - `ghcr.io/loafykitten/loafykitten-cafe:main`
+   - `ghcr.io/loafykitten/loafykitten-cafe:sha-<commit>`
 4. Actions joins your tailnet using the Tailscale GitHub Action.
 5. Actions copies `deploy/compose.yaml` to the server, writes a `.env` file with the immutable image tag, logs into GHCR on the server, and runs `docker compose pull && docker compose up -d --remove-orphans`.
+6. After the new `loafykitten-cafe` container reports healthy, Actions removes legacy containers named `loafyweb` and `loafykitten-net`.
 
 Before relying on the workflow, verify the deploy user manually:
 

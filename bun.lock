@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "loafykitten-net",
+      "name": "loafykitten-cafe",
       "devDependencies": {
         "@astrojs/check": "^0.9.8",
         "astro": "^6.1.9",

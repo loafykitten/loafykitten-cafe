@@ -1,12 +1,12 @@
 services:
-  loafykitten-net:
-    container_name: loafykitten-net
-    image: ${IMAGE_NAME:-ghcr.io/loafykitten/loafykitten-net}:${IMAGE_TAG:-main}
+  loafykitten-cafe:
+    container_name: loafykitten-cafe
+    image: ${IMAGE_NAME:-ghcr.io/loafykitten/loafykitten-cafe}:${IMAGE_TAG:-main}
     restart: unless-stopped
     networks:
       public-proxy:
         aliases:
-          - loafykitten-net
+          - loafykitten-cafe
 
 networks:
   public-proxy:
