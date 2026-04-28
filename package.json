@@ -10,8 +10,8 @@
     "check": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro check"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.7",
-    "astro": "^6",
+    "@astrojs/check": "^0.9.8",
+    "astro": "^6.1.9",
     "typescript": "^5.9.3"
   }
 }
