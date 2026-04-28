@@ -1,5 +1,7 @@
 ---
+import bgLanding from '@/assets/images/bg-landing.jpg'
 import bgMusic from '@/assets/images/bg-music.jpg'
+import { isMusicEnabled } from '@/features/music/music-enabled'
 import Aboutloafykitten from '@/features/music/Aboutloafykitten.astro'
 import CassetteCarousel from '@/features/music/CassetteCarousel.astro'
 import CassetteDeck from '@/features/music/CassetteDeck.astro'
@@ -10,14 +12,28 @@ import IslandLayout from '@/layouts/IslandLayout.astro'
 import type { BgImageMetadata } from '@/types'
 import { getImage } from 'astro:assets'
 
-const background: BgImageMetadata = {
-    url: bgMusic,
-    artistMetadata: {
-        artist: 'Mohamed_hassan',
-        artistUrl: 'https://pixabay.com/users/mohamed_hassan-5229782/',
-    },
-    pageBg: '#3971a5',
-}
+const background: BgImageMetadata = isMusicEnabled
+    ? {
+          url: bgMusic,
+          artistMetadata: {
+              artist: 'Mohamed_hassan',
+              artistUrl: 'https://pixabay.com/users/mohamed_hassan-5229782/',
+          },
+          pageBg: '#3971a5',
+      }
+    : {
+          url: bgLanding,
+          artistMetadata: {
+              artist: 'Pixabay',
+              artistUrl: 'https://pixabay.com/illustrations/cloud-stars-ocean-reflection-5946381/',
+          },
+          pageBg: '#024e50',
+      }
+
+const pageTitle = isMusicEnabled ? 'music and stuff' : '404 not found'
+const pageDescription = isMusicEnabled
+    ? "loafykitten's music projects, including lofi beats, experimental sound design, and more."
+    : 'Page not found.'
 
 const musicSocials = [
     { href: 'https://www.youtube.com/@loafykitten', name: 'YouTube' },
@@ -25,50 +41,90 @@ const musicSocials = [
     { href: 'https://patreon.com/loafykitten', name: 'Patreon' },
 ]
 
-// Process album art at build time
-const albumArtCache = new Map<string, string>()
-for (const song of cassetteData) {
-    if (!albumArtCache.has(song.album.name)) {
-        const optimized = await getImage({
-            src: song.album.albumArt,
-            width: 160,
-            format: 'webp',
-            quality: 80,
-        })
-        albumArtCache.set(song.album.name, optimized.src)
-    }
-}
+let clientSongs: ClientSongData[] = []
 
-const clientSongs: ClientSongData[] = cassetteData.map((song, i) => ({
-    index: i,
-    title: song.title,
-    albumName: song.album.name,
-    albumArtSrc: albumArtCache.get(song.album.name)!,
-    href: song.href!,
-    odesliHref: song.album.odesliHref,
-}))
+if (isMusicEnabled) {
+    // Process album art only while the page is enabled.
+    const albumArtCache = new Map<string, string>()
+    for (const song of cassetteData) {
+        if (!albumArtCache.has(song.album.name)) {
+            const optimized = await getImage({
+                src: song.album.albumArt,
+                width: 160,
+                format: 'webp',
+                quality: 80,
+            })
+            albumArtCache.set(song.album.name, optimized.src)
+        }
+    }
+
+    clientSongs = cassetteData.map((song, i) => ({
+        index: i,
+        title: song.title,
+        albumName: song.album.name,
+        albumArtSrc: albumArtCache.get(song.album.name)!,
+        href: song.href!,
+        odesliHref: song.album.odesliHref,
+    }))
+}
 ---
 
-<IslandLayout
-    title="music and stuff"
-    description="loafykitten's music projects, including lofi beats, experimental sound design, and more."
-    bgImageMetadata={background}
->
-    <section class="music-shell" id="music-player-view">
-        <CassetteCarousel songs={clientSongs} />
-        <CassetteDeck />
-        <div class="music-nav">
-            <a href="/" class="home-link">home</a>
-            <MusicSocials socials={musicSocials} />
-        </div>
-        <button class="about-link" data-scroll-to="about-loafykitten" aria-label="About loafykitten">
-            about loafykitten <span class="about-link__arrow">&darr;</span>
-        </button>
-    </section>
-    <Aboutloafykitten />
+<IslandLayout title={pageTitle} description={pageDescription} bgImageMetadata={background}>
+    {
+        isMusicEnabled ? (
+            <>
+                <section class="music-shell" id="music-player-view">
+                    <CassetteCarousel songs={clientSongs} />
+                    <CassetteDeck />
+                    <div class="music-nav">
+                        <a href="/" class="home-link">home</a>
+                        <MusicSocials socials={musicSocials} />
+                    </div>
+                    <button class="about-link" data-scroll-to="about-loafykitten" aria-label="About loafykitten">
+                        about loafykitten <span class="about-link__arrow">&darr;</span>
+                    </button>
+                </section>
+                <Aboutloafykitten />
+            </>
+        ) : (
+            <section class="music-disabled">
+                <h1>404 not found</h1>
+                <p>music is tucked away for now.</p>
+                <p>you can head back to the <a href="/">homepage</a>.</p>
+            </section>
+        )
+    }
 </IslandLayout>
 
 <style>
+    .music-disabled {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 2rem 1rem;
+    }
+
+    .music-disabled h1 {
+        font-size: 3rem;
+        margin: 0 0 1.25rem;
+    }
+
+    .music-disabled p {
+        font-size: 1.15rem;
+        margin: 0;
+    }
+
+    .music-disabled a {
+        color: #beef;
+    }
+
+    .music-disabled a:hover {
+        color: #ddd;
+    }
+
     .music-shell {
         display: flex;
         min-height: 100vh;
@@ -177,9 +233,13 @@ const clientSongs: ClientSongData[] = cassetteData.map((song, i) => ({
     }
 </style>
 
-<script>
-    const scrollContainer = document.querySelector('main')
-    if (scrollContainer) {
+<script is:inline define:vars={{ isMusicEnabled }}>
+    if (isMusicEnabled) {
+        const scrollContainer = document.querySelector('main')
+        if (!scrollContainer) {
+            throw new Error('Missing main scroll container')
+        }
+
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         const scrollBehavior = prefersReducedMotion ? 'instant' : 'smooth'
 

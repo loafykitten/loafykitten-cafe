@@ -8,6 +8,7 @@ import AspectCard from '@/features/aspects/AspectCard.astro'
 import AspectCardSelection from '@/features/aspects/AspectCardSelection.astro'
 import AspectCopyContainer from '@/features/aspects/AspectCopyContainer.astro'
 import AspectGreeting from '@/features/aspects/AspectGreeting.astro'
+import { isMusicEnabled } from '@/features/music/music-enabled'
 import IslandLayout from '@/layouts/IslandLayout.astro'
 import type { BgImageMetadata } from '@/types'
 
@@ -28,14 +29,18 @@ const aspects = [
         blurb: 'i do backend stuff!',
         subBlurb: "come see what i'm working on (please)",
     },
-    {
-        name: 'music',
-        href: '/music',
-        imgSrc: aspectMusic,
-        greeting: "i'm loafykitten",
-        blurb: 'lofi for the whole family!',
-        subBlurb: 'come listen to my noises (please)',
-    },
+    ...(isMusicEnabled
+        ? [
+              {
+                  name: 'music',
+                  href: '/music',
+                  imgSrc: aspectMusic,
+                  greeting: "i'm loafykitten",
+                  blurb: 'lofi for the whole family!',
+                  subBlurb: 'come listen to my noises (please)',
+              },
+          ]
+        : []),
 ]
 
 const background: BgImageMetadata = {
