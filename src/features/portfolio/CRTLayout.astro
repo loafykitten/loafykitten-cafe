@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { title, description, prompt, fileLabel, fileSublabel } = Astro.props
-const bgStyle = getCrtBgStyle('green', true)
+const bgStyle = getCrtBgStyle('pink', true)
 const currentPath = Astro.url.pathname
 
 const navLinks = [
@@ -96,8 +96,8 @@ const navLinks = [
             }
 
             &.active {
-                color: #0f0;
-                text-shadow: 0 0 4px #0f0;
+                color: var(--crt-fg-bright);
+                text-shadow: 0 0 4px var(--crt-fg-bright);
             }
 
             &.home {
@@ -129,25 +129,25 @@ const navLinks = [
 
         .prompt {
             font-size: 0.9rem;
-            color: #0f0;
+            color: var(--crt-fg-bright);
         }
 
         .file-label {
             font-size: 1rem;
-            color: #6b6;
+            color: var(--crt-fg-label);
             letter-spacing: 0.2em;
             text-align: center;
         }
 
         .file-sublabel {
             font-size: 0.75rem;
-            color: #494;
+            color: var(--crt-fg-dim);
             text-align: center;
         }
     }
 
     .cursor-blink {
-        color: #0f0;
+        color: var(--crt-fg-bright);
         animation: blink 1s step-end infinite;
     }
 
@@ -165,18 +165,18 @@ const navLinks = [
 
     .divider {
         border: none;
-        border-top: 1px dashed #2a5a2a;
+        border-top: 1px dashed var(--crt-border-divider);
         margin: 0.5rem 0;
     }
 
     :global(.section h2) {
         font-size: 0.85rem;
         font-weight: 400;
-        color: #5a5;
+        color: var(--crt-fg-section);
         letter-spacing: 0.15em;
         text-transform: uppercase;
         margin-bottom: 0.75rem;
-        border-bottom: 1px solid #1a3a1a;
+        border-bottom: 1px solid var(--crt-border-section);
         padding-bottom: 0.25rem;
     }
 
@@ -196,12 +196,12 @@ const navLinks = [
     }
 
     :global(.skill-tags li) {
-        background-color: #0f02;
-        border: 1px solid #2a5a2a;
+        background-color: var(--crt-tag-bg);
+        border: 1px solid var(--crt-border-divider);
         padding: 0.2rem 0.6rem;
         border-radius: 2px;
         font-size: 0.8rem;
-        color: #8b8;
+        color: var(--crt-tag-fg);
         transform: translate3d(0, 0, 0);
         transition:
             background-color 0.3s ease,
@@ -210,15 +210,15 @@ const navLinks = [
     }
 
     :global(.skill-tags li:hover) {
-        background-color: #0f04;
+        background-color: var(--crt-tag-bg-hover);
         transform: translateY(-2px);
-        color: #bfb;
+        color: var(--crt-tag-fg-hover);
     }
 
     .file-footer {
         .eof {
             text-align: center;
-            color: #494;
+            color: var(--crt-fg-dim);
             font-size: 0.8rem;
             letter-spacing: 0.3em;
         }

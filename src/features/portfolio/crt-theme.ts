@@ -1,17 +1,68 @@
 import type { BgStyle } from '@/types'
 
-type CrtTheme = 'blue' | 'green'
+type CrtTheme = 'blue' | 'green' | 'pink'
 
-const themes = {
+interface CrtPalette {
+    bg: string
+    glow: string
+    screenGlow: string
+    fgBright: string
+    fgLabel: string
+    fgDim: string
+    fgSection: string
+    borderDivider: string
+    borderSection: string
+    tagBg: string
+    tagBgHover: string
+    tagFg: string
+    tagFgHover: string
+}
+
+const themes: Record<CrtTheme, CrtPalette> = {
     blue: {
         bg: '#080810',
         glow: 'rgba(15, 25, 50, 0.5)',
         screenGlow: 'rgba(40, 80, 160, 0.12)',
+        fgBright: '#7fc8ff',
+        fgLabel: '#5a8abf',
+        fgDim: '#4a6a8a',
+        fgSection: '#6a9ac8',
+        borderDivider: '#1a3a5a',
+        borderSection: '#10243a',
+        tagBg: '#000810',
+        tagBgHover: '#001020',
+        tagFg: '#88a8c8',
+        tagFgHover: '#bccce0',
     },
     green: {
         bg: '#040d04',
         glow: 'rgba(0, 40, 0, 0.5)',
         screenGlow: 'rgba(0, 120, 0, 0.10)',
+        fgBright: '#0f0',
+        fgLabel: '#6b6',
+        fgDim: '#494',
+        fgSection: '#5a5',
+        borderDivider: '#2a5a2a',
+        borderSection: '#1a3a1a',
+        tagBg: '#0f02',
+        tagBgHover: '#0f04',
+        tagFg: '#8b8',
+        tagFgHover: '#bfb',
+    },
+    pink: {
+        bg: '#100408',
+        glow: 'rgba(50, 0, 25, 0.5)',
+        screenGlow: 'rgba(200, 80, 130, 0.12)',
+        fgBright: '#ffc8d8',
+        fgLabel: '#e8a0b4',
+        fgDim: '#b06a7e',
+        fgSection: '#dc8aa0',
+        borderDivider: '#5a2a3a',
+        borderSection: '#3a1a26',
+        tagBg: '#1a0410',
+        tagBgHover: '#2a0818',
+        tagFg: '#d8a',
+        tagFgHover: '#fcd',
     },
 }
 
@@ -25,6 +76,16 @@ export function getCrtBgStyle(theme: CrtTheme = 'green', enableGlow = true): BgS
             'crt-vignette': 'rgba(0, 0, 0, 0.8)',
             'crt-scanline-alpha': '0.18',
             'crt-screen-glow': enableGlow ? t.screenGlow : 'transparent',
+            'crt-fg-bright': t.fgBright,
+            'crt-fg-label': t.fgLabel,
+            'crt-fg-dim': t.fgDim,
+            'crt-fg-section': t.fgSection,
+            'crt-border-divider': t.borderDivider,
+            'crt-border-section': t.borderSection,
+            'crt-tag-bg': t.tagBg,
+            'crt-tag-bg-hover': t.tagBgHover,
+            'crt-tag-fg': t.tagFg,
+            'crt-tag-fg-hover': t.tagFgHover,
             'footer-bg': '#000',
         },
         style: `
