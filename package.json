@@ -7,7 +7,8 @@
     "start": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro preview",
-    "check": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro check"
+    "check": "ASTRO_TELEMETRY_DISABLED=1 bunx --bun astro check",
+    "deploy": "bun run build && bunx wrangler deploy -c ./wrangler.jsonc --no-autoconfig"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
