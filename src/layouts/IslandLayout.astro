@@ -1,5 +1,6 @@
 ---
 import Footer from '@/components/Footer.astro'
+import strings from '@/data/strings.json'
 import '@/styles/global.css'
 import type { BgImageMetadata, BgStyle } from '@/types'
 import { getImage } from 'astro:assets'
@@ -13,7 +14,7 @@ interface Props {
 
 const { title, description, bgImageMetadata, bgStyle } = Astro.props
 
-const pageTitle = `${title} | loafykitten`
+const pageTitle = strings.site.titleTemplate.replace('{title}', title)
 const optimizedBg = bgImageMetadata
     ? await getImage({ src: bgImageMetadata.url, format: 'webp', width: 1920, quality: 70 })
     : null

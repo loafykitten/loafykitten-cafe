@@ -1,38 +1,11 @@
 ---
+import strings from '@/data/strings.json'
 import { tracks, musicLinks, formatDuration } from '@/features/music/singy-songy-data'
 
-/* ─────────────────────────────────────────────────────────────────────────
-   EDIT ME — every human-visible string on the flyer lives here.
-   Change the copy, jokes, and stamps without touching markup or styles.
-   ───────────────────────────────────────────────────────────────────────── */
-const COPY = {
-    presents: 'basement records (a bedroom, actually) presents',
-    headliner: 'loafykitten', // ransom-note treated, one <span> per letter
-    subhead: 'LIVE IN YOUR HEADPHONES — ONE NIGHT ONLY (every night)',
-    collection: 'a collection of hip-hop & alt-emo-pop, recorded too late at night',
-    setlistLabel: "TONIGHT'S SET",
-    status: {
-        idle: 'SOUND CHECK // PRESS PLAY',
-        playing: 'NOW PLAYING',
-        paused: 'PAUSED — grab a tissue',
-        error: 'TAPE JAMMED // could not load',
-    },
-    transport: {
-        prev: 'PREV',
-        play: 'PLAY',
-        pause: 'PAUSE',
-        next: 'NEXT',
-    },
-    stamps: {
-        bandcampLead: 'FREE ON BANDCAMP',
-        bandcampSub: 'the whole album, name-your-price — $0 is a price',
-        youtube: 'ALSO PLAYING ON YOUTUBE',
-        allAges: 'ALL AGES',
-        admission: 'ADMISSION: FREE\n(emotionally: expensive)',
-        tissues: 'bring tissues',
-    },
-    home: 'back to loafykitten.cafe',
-}
+/* Every human-visible string on the flyer lives in src/data/strings.json
+   under "music" — edit copy there, not in the markup.
+   COPY.headliner is ransom-note treated, one <span> per letter. */
+const COPY = strings.music
 
 /* Ransom-note letter recipe. Cycled across the headliner so every letter
    gets a different font / rotation, and a few get inverted (black block). */

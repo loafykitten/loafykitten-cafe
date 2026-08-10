@@ -1,18 +1,12 @@
 ---
-import aspectloafykitten from '@/assets/images/aspect-loafykitten.png'
+import aspectLoafy from '@/assets/images/aspect-loafy.png'
 import bgVt from '@/assets/images/bg-vt.png'
+import strings from '@/data/strings.json'
 import IslandLayout from '@/layouts/IslandLayout.astro'
 import type { BgImageMetadata } from '@/types'
 import { Image } from 'astro:assets'
 
-const contentTitles = [
-    'Lofi Creation',
-    'Live Programming',
-    'Detroit Become Human',
-    'Palworld',
-    'Elden Ring',
-    'Cyberpunk 2077',
-]
+const copy = strings.vtuber
 
 const background: BgImageMetadata = {
     url: bgVt,
@@ -24,62 +18,41 @@ const background: BgImageMetadata = {
 }
 ---
 
-<IslandLayout
-    title="streams and stuff"
-    description="loafykitten — a silly little VTuber, software engineer, and lofi artist streaming most nights at ~9pm CST."
-    bgImageMetadata={background}
->
+<IslandLayout title={copy.title} description={copy.description} bgImageMetadata={background}>
     <section class="info-shell">
         <div class="info-container">
-            <a href="/" class="home-link">home</a>
+            <a href="/" class="home-link">{copy.homeLink}</a>
             <div class="author">
                 <div class="author-identity">
                     <div class="author-avatar">
-                        <Image src={aspectloafykitten} alt="loafykitten avatar" />
+                        <Image src={aspectLoafy} alt={copy.avatarAlt} />
                     </div>
                     <h2 class="author-name">
-                        <span class="author-name__primary">Loafy</span>
-                        <span class="author-name__secondary">// loafykitten</span>
+                        <span class="author-name__primary">{copy.namePrimary}</span>
+                        <span class="author-name__secondary">{copy.nameSecondary}</span>
                     </h2>
                 </div>
                 <nav>
-                    <a
-                        class="twitch"
-                        href="https://www.twitch.tv/caffeineplz"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Twitch »
-                    </a>
-                    <a
-                        class="youtube"
-                        href="https://www.youtube.com/@loafykitten"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        YouTube »
-                    </a>
-                    <a class="tip" href="https://www.ko-fi.com/loafykitten" target="_blank" rel="noopener noreferrer">
-                        Tip Me ꨄ »
-                    </a>
+                    {
+                        copy.links.map((link) => (
+                            <a class={link.class} href={link.href} target="_blank" rel="noopener noreferrer">
+                                {link.label}
+                            </a>
+                        ))
+                    }
                 </nav>
             </div>
 
             <div class="content">
                 <div class="bio">
-                    <h1>Biography</h1>
+                    <h1>{copy.bioHeading}</h1>
 
-                    <p>Hi, I'm your friendly neighborhood VTuber!</p>
-
-                    <p>
-                        A silly little software engineer, lofi artist, and low energy streamer. You can find me most
-                        nights at ~9pm CST!
-                    </p>
+                    {copy.bioParagraphs.map((paragraph) => <p>{paragraph}</p>)}
                 </div>
                 <div class="streams">
-                    <h1>Recent Streams</h1>
+                    <h1>{copy.streamsHeading}</h1>
                     <div class="content-pills">
-                        {contentTitles.map((title) => <span>{title}</span>)}
+                        {copy.recentStreams.map((title) => <span>{title}</span>)}
                     </div>
                 </div>
             </div>

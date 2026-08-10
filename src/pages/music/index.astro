@@ -1,24 +1,22 @@
 ---
-import { activeDesign } from '@/features/music/design-config'
-import DesignRenderer from '@/features/music/DesignRenderer.astro'
+import strings from '@/data/strings.json'
+import ZineFlyer from '@/features/music/designs/ZineFlyer.astro'
 import { isMusicEnabled } from '@/features/music/music-enabled'
 import IslandLayout from '@/layouts/IslandLayout.astro'
 
-const pageTitle = isMusicEnabled ? 'music and stuff' : '404 not found'
-const pageDescription = isMusicEnabled
-    ? "loafykitten's music — hip-hop and alt emo pop, made with too many feelings."
-    : 'Page not found.'
+const copy = strings.music
+const pageTitle = isMusicEnabled ? copy.title : copy.disabled.title
+const pageDescription = isMusicEnabled ? copy.description : copy.disabled.description
 ---
 
 <IslandLayout title={pageTitle} description={pageDescription}>
     {
         isMusicEnabled ? (
-            <DesignRenderer design={activeDesign} />
+            <ZineFlyer />
         ) : (
             <section class="music-disabled">
-                <h1>404 not found</h1>
-                <p>music is tucked away for now.</p>
-                <p>you can head back to the <a href="/">homepage</a>.</p>
+                <h1>{copy.disabled.heading}</h1>
+                {copy.disabled.paragraphsHtml.map((paragraph) => <p set:html={paragraph} />)}
             </section>
         )
     }

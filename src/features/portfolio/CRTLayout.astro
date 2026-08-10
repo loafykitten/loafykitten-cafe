@@ -1,4 +1,5 @@
 ---
+import strings from '@/data/strings.json'
 import { getCrtBgStyle } from '@/features/portfolio/crt-theme'
 import IslandLayout from '@/layouts/IslandLayout.astro'
 
@@ -14,11 +15,7 @@ const { title, description, prompt, fileLabel, fileSublabel } = Astro.props
 const bgStyle = getCrtBgStyle('pink', true)
 const currentPath = Astro.url.pathname
 
-const navLinks = [
-    { href: '/', label: 'home' },
-    { href: '/portfolio', label: 'portfolio' },
-    { href: '/portfolio/projects', label: 'projects' },
-]
+const navLinks = strings.portfolio.nav
 ---
 
 <IslandLayout title={title} description={description} bgStyle={bgStyle}>
@@ -51,7 +48,7 @@ const navLinks = [
 
             <footer class="file-footer">
                 <hr class="divider" />
-                <p class="eof">[EOF]</p>
+                <p class="eof">{strings.portfolio.eof}</p>
             </footer>
         </article>
     </section>

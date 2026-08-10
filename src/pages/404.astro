@@ -1,6 +1,7 @@
 ---
 import IslandLayout from '@/layouts/IslandLayout.astro'
 import bgLanding from '@/assets/images/bg-landing.jpg'
+import strings from '@/data/strings.json'
 import type { BgImageMetadata } from '@/types'
 
 const background: BgImageMetadata = {
@@ -13,11 +14,14 @@ const background: BgImageMetadata = {
 }
 ---
 
-<IslandLayout title="404 not found" description="Page not found." bgImageMetadata={background}>
+<IslandLayout
+    title={strings.notFound.title}
+    description={strings.notFound.description}
+    bgImageMetadata={background}
+>
     <section class="not-found">
-        <h1>404 not found</h1>
-        <p>uhhh... looks like the page you're looking for doesn't exist or something?</p>
-        <p>maybe try going back to the <a href="/">homepage</a> or whatever whatever</p>
+        <h1>{strings.notFound.heading}</h1>
+        {strings.notFound.paragraphsHtml.map((paragraph) => <p set:html={paragraph} />)}
     </section>
 </IslandLayout>
 

@@ -1,39 +1,31 @@
 ---
 import aspectEmber from '@/assets/images/aspect-ember.png'
+import strings from '@/data/strings.json'
 import CRTLayout from '@/features/portfolio/CRTLayout.astro'
 import { Image } from 'astro:assets'
+
+const copy = strings.portfolio
 ---
 
 <CRTLayout
-    title="portfolio"
-    description="Ember — Senior Mobile Engineer and Game Server Engineer. Projects, experience, and more."
-    prompt="cat /users/a.ember/overview.dat"
-    fileLabel="DOSSIER — OVERVIEW"
+    title={copy.title}
+    description={copy.description}
+    prompt={copy.prompt}
+    fileLabel={copy.fileLabel}
 >
     <section class="section author">
-        <Image src={aspectEmber} alt="ember headshot" />
+        <Image src={aspectEmber} alt={copy.headshotAlt} />
         <div class="author-info">
-            <h1 class="name">Ember A.</h1>
+            <h1 class="name">{copy.name}</h1>
             <div class="author-role">
-                <p>Software Engineer</p>
+                <p>{copy.role}</p>
             </div>
         </div>
     </section>
 
     <section class="section biography">
-        <h2>// ABOUT</h2>
-        <p>
-            Hiii! I specialize in any-stack development. I build across mobile, backend, desktop, and game server environments.
-        </p>
-        <p>
-            With a decade+ of experience in the industry, I've contributed to projects from B2B software to indie games.
-        </p>
-        <p>
-            When I'm not working or studying, I'm grinding my projects, my lofi, or gaming. All live as <a
-                href="/vtuber"
-                class="link-loafykitten">loafykitten</a
-            >!
-        </p>
+        <h2>{copy.aboutHeading}</h2>
+        {copy.aboutParagraphsHtml.map((paragraph) => <p set:html={paragraph} />)}
     </section>
 </CRTLayout>
 

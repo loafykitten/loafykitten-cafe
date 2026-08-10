@@ -1,4 +1,5 @@
 ---
+import strings from '@/data/strings.json'
 import type { BgArtistMetadata } from '@/types/bg-artist-metadata'
 
 interface Props {
@@ -9,25 +10,11 @@ const { bgArtistMetadata } = Astro.props
 
 const date = new Date().getFullYear()
 const author = {
-    name: 'loafykitten',
-    url: 'https://github.com/loafykitten',
+    name: strings.footer.authorName,
+    url: strings.footer.authorUrl,
 }
 
-const blurbs = [
-    `there's no place like 127.0.0.1`,
-    `me += you`,
-    `while (alive) { code(); }`,
-    `sudo rm -rf / --no-preserve-root`,
-    `if (coffee) { code(); }`,
-    `git commit -m "my heart"`,
-    `it works on my machine`,
-]
-
-const socialLinks = [
-    { href: 'https://threads.com/@loafykitten', label: 'Threads' },
-    { href: 'https://bsky.app/profile/loafykitten.cafe', label: 'Bluesky' },
-    { href: 'https://patreon.com/loafykitten', label: 'Patreon' },
-]
+const { blurbs, socialLinks } = strings.footer
 ---
 
 <footer>
@@ -38,7 +25,7 @@ const socialLinks = [
             bgArtistMetadata && (
                 <>
                     {' '}
-                    - background by{' '}
+                    {strings.footer.backgroundBy}{' '}
                     <a href={bgArtistMetadata.artistUrl} target="_blank" rel="noopener noreferrer">
                         {bgArtistMetadata.artist}
                     </a>
@@ -47,7 +34,10 @@ const socialLinks = [
         }
     </p>
     <p>
-        <small>ヽ(*・ω・)ﾉ {blurbs[Math.floor(Math.random() * blurbs.length)]}</small>
+        <small
+            >{strings.footer.kaomoji}
+            <span data-footer-blurb>{blurbs[Math.floor(Math.random() * blurbs.length)]}</span></small
+        >
     </p>
     <p class="social-links">
         {
@@ -59,6 +49,18 @@ const socialLinks = [
         }
     </p>
 </footer>
+
+<script>
+    // The frontmatter pick above runs once at build time, so a static page
+    // would show the same blurb on every refresh — re-roll in the browser.
+    import strings from '@/data/strings.json'
+
+    const blurbEl = document.querySelector('[data-footer-blurb]')
+    const blurbs = strings.footer.blurbs
+    if (blurbEl && blurbs.length > 0) {
+        blurbEl.textContent = blurbs[Math.floor(Math.random() * blurbs.length)] ?? ''
+    }
+</script>
 
 <style>
     footer {

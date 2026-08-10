@@ -1,47 +1,28 @@
 ---
 import aspectEmber from '@/assets/images/aspect-ember.png'
-import aspectloafykitten from '@/assets/images/aspect-loafykitten.png'
-import aspectMusic from '@/assets/images/aspect-music.png'
+import aspectLoafy from '@/assets/images/aspect-loafy.png'
+import aspectLoafykitten from '@/assets/images/aspect-loafykitten.png'
 import bgLanding from '@/assets/images/bg-landing.jpg'
 import AspectBlurb from '@/features/aspects/AspectBlurb.astro'
 import AspectCard from '@/features/aspects/AspectCard.astro'
 import AspectCardSelection from '@/features/aspects/AspectCardSelection.astro'
 import AspectCopyContainer from '@/features/aspects/AspectCopyContainer.astro'
 import AspectGreeting from '@/features/aspects/AspectGreeting.astro'
+import strings from '@/data/strings.json'
 import { isMusicEnabled } from '@/features/music/music-enabled'
 import IslandLayout from '@/layouts/IslandLayout.astro'
 import type { BgImageMetadata } from '@/types'
+import type { ImageMetadata } from 'astro'
 
-const aspects = [
-    {
-        name: 'loafykitten',
-        href: '/vtuber',
-        imgSrc: aspectloafykitten,
-        greeting: "Loafy",
-        blurb: 'Hybrid VTuber',
-        subBlurb: 'I stream most of my gaming and software dev on Twitch!',
-    },
-    {
-        name: 'ember',
-        href: '/portfolio',
-        imgSrc: aspectEmber,
-        greeting: "Ember",
-        blurb: 'Software Engineer',
-        subBlurb: "Wanna learn about my projects or the real me?",
-    },
-    ...(isMusicEnabled
-        ? [
-              {
-                  name: 'music',
-                  href: '/music',
-                  imgSrc: aspectMusic,
-                  greeting: "i'm loafykitten",
-                  blurb: 'hip-hop & alt emo pop!',
-                  subBlurb: 'come listen to my noises (please)',
-              },
-          ]
-        : []),
-]
+const aspectAssets: Record<string, { href: string; imgSrc: ImageMetadata }> = {
+    loafykitten: { href: '/vtuber', imgSrc: aspectLoafy },
+    ember: { href: '/portfolio', imgSrc: aspectEmber },
+    music: { href: '/music', imgSrc: aspectLoafykitten },
+}
+
+const aspects = strings.home.aspects
+    .filter((aspect) => aspect.name !== 'music' || isMusicEnabled)
+    .map((aspect) => ({ ...aspect, ...aspectAssets[aspect.name] }))
 
 const background: BgImageMetadata = {
     url: bgLanding,
@@ -54,8 +35,8 @@ const background: BgImageMetadata = {
 ---
 
 <IslandLayout
-    title="homepage"
-    description="loafykitten — streamer, software engineer, and lofi artist."
+    title={strings.home.title}
+    description={strings.home.description}
     bgImageMetadata={background}
 >
     <section class="landing">

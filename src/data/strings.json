@@ -1,0 +1,182 @@
+{
+    "site": {
+        "titleTemplate": "{title} | loafykitten"
+    },
+    "home": {
+        "title": "homepage",
+        "description": "loafykitten — streamer, software engineer, and lofi artist.",
+        "aspects": [
+            {
+                "name": "loafykitten",
+                "greeting": "loafy",
+                "blurb": "hybrid vtuber",
+                "subBlurb": "i stream most of my gaming and software dev on twitch!"
+            },
+            {
+                "name": "ember",
+                "greeting": "ember",
+                "blurb": "software engineer",
+                "subBlurb": "wanna learn about my projects or the real me?"
+            },
+            {
+                "name": "music",
+                "greeting": "loafykitten",
+                "blurb": "hip-hop & alt emo pop!",
+                "subBlurb": "come listen to my noises (please)"
+            }
+        ]
+    },
+    "notFound": {
+        "title": "404 not found",
+        "description": "Page not found.",
+        "heading": "404 not found",
+        "paragraphsHtml": [
+            "uhhh... looks like the page you're looking for doesn't exist or something?",
+            "maybe try going back to the <a href=\"/\">homepage</a> or whatever whatever"
+        ]
+    },
+    "vtuber": {
+        "title": "streams and stuff",
+        "description": "loafykitten! a silly little VTuber, software engineer, and lofi artist streaming most nights at ~9pm CST.",
+        "homeLink": "home",
+        "avatarAlt": "loafykitten avatar",
+        "namePrimary": "Loafy",
+        "nameSecondary": "// loafykitten",
+        "links": [
+            { "class": "twitch", "label": "Twitch »", "href": "https://www.twitch.tv/caffeineplz" },
+            { "class": "youtube", "label": "YouTube »", "href": "https://www.youtube.com/@loafykitten" },
+            { "class": "tip", "label": "Tip Me ꨄ »", "href": "https://www.ko-fi.com/loafykitten" }
+        ],
+        "bioHeading": "Biography",
+        "bioParagraphs": [
+            "Hi, I'm your friendly neighborhood VTuber!",
+            "A silly little software engineer, lofi artist, and low energy streamer. You can find me most nights at ~9pm CST!"
+        ],
+        "streamsHeading": "Recent Streams",
+        "recentStreams": [
+            "Lofi Creation",
+            "Live Programming",
+            "Detroit Become Human",
+            "Palworld",
+            "Elden Ring",
+            "Cyberpunk 2077"
+        ]
+    },
+    "portfolio": {
+        "nav": [
+            { "href": "/", "label": "home" },
+            { "href": "/portfolio", "label": "portfolio" },
+            { "href": "/portfolio/projects", "label": "projects" }
+        ],
+        "eof": "[EOF]",
+        "title": "portfolio",
+        "description": "Ember — Senior Mobile Engineer and Game Server Engineer. Projects, experience, and more.",
+        "prompt": "cat /users/a.ember/overview.dat",
+        "fileLabel": "DOSSIER — OVERVIEW",
+        "headshotAlt": "ember headshot",
+        "name": "Ember A.",
+        "role": "Software Engineer",
+        "aboutHeading": "// ABOUT",
+        "aboutParagraphsHtml": [
+            "Hiii! I specialize in any-stack development. I build across mobile, backend, desktop, and game server environments.",
+            "With a decade+ of experience in the industry, I've contributed to projects from B2B software to indie games.",
+            "When I'm not working or studying, I'm grinding my projects, my lofi, or gaming. All live as <a href=\"/vtuber\" class=\"link-loafykitten\">loafykitten</a>!"
+        ]
+    },
+    "projects": {
+        "title": "projects",
+        "description": "Featured projects by Ember — real-time speech detection, game modding, and web frameworks.",
+        "prompt": "cat /users/a.ember/projects.dat",
+        "fileLabel": "PROJECT FILES — FEATURED",
+        "fileSublabelTemplate": "{count} entries found",
+        "introHeading": "// FEATURED PROJECTS",
+        "introHtml": "A curated selection of my most notable work. For the full catalog, see my <a class=\"link-cyan\" href=\"https://github.com/loafykitten\" target=\"_blank\" rel=\"noopener noreferrer\">GitHub</a>.",
+        "listHeading": "// PROJECT FILES",
+        "viewProject": "> view project",
+        "entries": [
+            {
+                "name": "Swear Jar",
+                "date": "Jan 2026",
+                "tagline": "Real-Time Speech Detection + Live Web Widget",
+                "descriptionHtml": "Two-component system: a web service with API and WebSocket broadcasting for a live widget, paired with a Python speech detection client powered by Whisper. Pipeline flows from audio capture through Whisper transcription, profanity detection, API event dispatch, WebSocket broadcast, to live UI update.",
+                "tags": ["Python", "TypeScript"],
+                "href": "https://github.com/loafykitten/swear-jar"
+            },
+            {
+                "name": "Elden Ring: Classes Expanded",
+                "date": "Jan 2026 — Present",
+                "tagline": "Game Modification for AAA FromSoftware Title",
+                "descriptionHtml": "Reverse-engineered game architecture to create custom weapon variants and a modular mod structure using Mod Engine 3. Features two original character archetypes — Abysswalker and Bestia — each with unique starting builds and equipment.",
+                "tags": ["Mod Engine 3", "Git", "Game Asset Modification"],
+                "href": "https://github.com/loafykitten/er-modding"
+            },
+            {
+                "name": "Transgress",
+                "date": "Sep 2024 — Present",
+                "tagline": "TypeScript-First Web Server Framework for Bun",
+                "descriptionHtml": "HTTP routing, middleware pipeline, custom logger, WebSocket support, and HTML templating. Published as <a class=\"link-cyan\" href=\"https://www.npmjs.com/package/@loafykitten/transgress\" target=\"_blank\" rel=\"noopener noreferrer\">@loafykitten/transgress</a> on npm. A learning project exploring web framework fundamentals from the ground up.",
+                "tags": ["TypeScript"],
+                "href": "https://github.com/loafykitten/transgress"
+            }
+        ]
+    },
+    "music": {
+        "title": "music and stuff",
+        "description": "loafykitten's music — hip-hop and alt emo pop, made with too many feelings.",
+        "disabled": {
+            "title": "404 not found",
+            "description": "Page not found.",
+            "heading": "404 not found",
+            "paragraphsHtml": [
+                "music is tucked away for now.",
+                "you can head back to the <a href=\"/\">homepage</a>."
+            ]
+        },
+        "presents": "bedroom records presents",
+        "headliner": "loafykitten",
+        "subhead": "LIVE IN YOUR HEADPHONES, ONE NIGHT ONLY (every night)",
+        "collection": "a collection of hip-hop & alt-emo-pop, recorded too late at night",
+        "setlistLabel": "TONIGHT'S SET",
+        "status": {
+            "idle": "SOUND CHECK // PRESS PLAY",
+            "playing": "NOW PLAYING",
+            "paused": "PAUSED",
+            "error": "TAPE JAMMED // could not load"
+        },
+        "transport": {
+            "prev": "PREV",
+            "play": "PLAY",
+            "pause": "PAUSE",
+            "next": "NEXT"
+        },
+        "stamps": {
+            "bandcampLead": "FREE ON BANDCAMP",
+            "bandcampSub": "all albums -> pay-what-you-want ($0+)",
+            "youtube": "ALSO PLAYING ON YOUTUBE",
+            "allAges": "ALL AGES",
+            "admission": "ADMISSION: FREE\n(emotionally: expensive)",
+            "tissues": "bring tissues"
+        },
+        "home": "back to loafykitten.cafe"
+    },
+    "footer": {
+        "authorName": "loafykitten",
+        "authorUrl": "https://github.com/loafykitten",
+        "backgroundBy": "- background by",
+        "kaomoji": "ヽ(*・ω・)ﾉ",
+        "blurbs": [
+            "there's no place like 127.0.0.1",
+            "me += you",
+            "while (alive) { code(); }",
+            "sudo rm -rf / --no-preserve-root",
+            "if (coffee) { code(); }",
+            "git commit -m \"my heart\"",
+            "it works on my machine"
+        ],
+        "socialLinks": [
+            { "href": "https://threads.com/@loafykitten", "label": "Threads" },
+            { "href": "https://bsky.app/profile/loafykitten.cafe", "label": "Bluesky" },
+            { "href": "https://patreon.com/loafykitten", "label": "Patreon" }
+        ]
+    }
+}
