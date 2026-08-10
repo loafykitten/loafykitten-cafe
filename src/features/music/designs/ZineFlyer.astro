@@ -1,0 +1,983 @@
+---
+import { tracks, musicLinks, formatDuration } from '@/features/music/singy-songy-data'
+
+/* ─────────────────────────────────────────────────────────────────────────
+   EDIT ME — every human-visible string on the flyer lives here.
+   Change the copy, jokes, and stamps without touching markup or styles.
+   ───────────────────────────────────────────────────────────────────────── */
+const COPY = {
+    presents: 'basement records (a bedroom, actually) presents',
+    headliner: 'LOAFYKITTEN', // ransom-note treated, one <span> per letter
+    subhead: 'LIVE IN YOUR HEADPHONES — ONE NIGHT ONLY (every night)',
+    collection: 'a collection of hip-hop & alt-emo-pop, recorded too late at night',
+    setlistLabel: "TONIGHT'S SET",
+    status: {
+        idle: 'SOUND CHECK // PRESS PLAY',
+        playing: 'NOW PLAYING',
+        paused: 'PAUSED — grab a tissue',
+        error: 'TAPE JAMMED // could not load',
+    },
+    transport: {
+        prev: 'PREV',
+        play: 'PLAY',
+        pause: 'PAUSE',
+        next: 'NEXT',
+    },
+    stamps: {
+        bandcampLead: 'FREE ON BANDCAMP',
+        bandcampSub: 'the whole album, name-your-price — $0 is a price',
+        youtube: 'ALSO PLAYING ON YOUTUBE',
+        allAges: 'ALL AGES',
+        admission: 'ADMISSION: FREE\n(emotionally: expensive)',
+        tissues: 'bring tissues',
+    },
+    home: 'back to loafykitten.cafe',
+}
+
+/* Ransom-note letter recipe. Cycled across the headliner so every letter
+   gets a different font / rotation, and a few get inverted (black block). */
+type Ransom = { font: string; rot: number; invert: boolean; scale: number }
+const RANSOM: Ransom[] = [
+    { font: "'Anton', Impact, sans-serif", rot: -4, invert: false, scale: 1.02 },
+    { font: 'Georgia, serif', rot: 3, invert: true, scale: 0.9 },
+    { font: "'Times New Roman', Times, serif", rot: -2, invert: false, scale: 1.06 },
+    { font: "'Special Elite', 'Courier New', monospace", rot: 5, invert: false, scale: 0.9 },
+    { font: "'Arial Black', Arial, sans-serif", rot: -3, invert: false, scale: 1.0 },
+    { font: 'Georgia, serif', rot: 4, invert: false, scale: 0.96 },
+    { font: "'Anton', Impact, sans-serif", rot: -5, invert: true, scale: 0.94 },
+    { font: "'Courier New', monospace", rot: 2, invert: false, scale: 0.98 },
+]
+const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.length] }))
+---
+
+<link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Special+Elite&display=swap"
+/>
+
+<style is:global>
+    /* Own the page background: dark void the pinned-up flyer floats on. */
+    body {
+        background: #17130f;
+        --footer-bg: rgba(8, 6, 4, 0.86);
+    }
+</style>
+
+<section class="flyer-page" data-flyer>
+    <!-- decorative full-bleed void behind the flyer -->
+    <div class="void" aria-hidden="true"></div>
+
+    <article class="flyer">
+        <!-- masking-tape holding the flyer to the wall -->
+        <span class="tape tape--tl" aria-hidden="true"></span>
+        <span class="tape tape--tr" aria-hidden="true"></span>
+        <!-- subtle riso mis-registration stripe (a quiet trans-flag nod) -->
+        <span class="misprint" aria-hidden="true"></span>
+
+        <!-- big grainy xeroxed cat-ears watermark -->
+        <svg class="ears" viewBox="0 0 240 130" aria-hidden="true">
+            <path
+                d="M14 128 C 20 58, 44 20, 84 12 C 70 50, 70 92, 92 128 Z M226 128 C 220 58, 196 20, 156 12 C 170 50, 170 92, 148 128 Z"
+            ></path>
+        </svg>
+
+        <header class="masthead">
+            <p class="presents">{COPY.presents}</p>
+
+            <h1 class="ransom" aria-label={COPY.headliner}>
+                {
+                    letters.map((l) => (
+                        <span
+                            class:list={['ransom__l', { 'ransom__l--inv': l.invert }]}
+                            style={`--rot:${l.rot}deg;--scl:${l.scale};font-family:${l.font}`}
+                            aria-hidden="true"
+                        >
+                            {l.ch}
+                        </span>
+                    ))
+                }
+            </h1>
+
+            <p class="subhead">{COPY.subhead}</p>
+            <p class="collection">{COPY.collection}</p>
+        </header>
+
+        <!-- SETLIST -->
+        <section class="setlist" aria-label="Setlist">
+            <h2 class="setlist__label">
+                {COPY.setlistLabel}
+                <span class="setlist__rule" aria-hidden="true"></span>
+            </h2>
+
+            <ol class="tracks">
+                {
+                    tracks.map((t) => (
+                        <li class="track" data-i={t.index}>
+                            <div class="track__fill" aria-hidden="true" />
+                            <button
+                                type="button"
+                                class="track__toggle"
+                                data-i={t.index}
+                                aria-label={`Play ${t.title}`}
+                            >
+                                <span class="track__num">
+                                    {String(t.index + 1).padStart(2, '0')}
+                                </span>
+                                <span class="track__title">{t.title}</span>
+                                <span class="track__time" data-i={t.index}>
+                                    {formatDuration(t.duration)}
+                                </span>
+                            </button>
+                            <div
+                                class="track__seek"
+                                data-i={t.index}
+                                role="slider"
+                                tabindex="-1"
+                                aria-hidden="true"
+                                aria-label={`Seek within ${t.title}`}
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="0"
+                            >
+                                <span class="track__head" aria-hidden="true" />
+                            </div>
+                        </li>
+                    ))
+                }
+            </ol>
+        </section>
+
+        <!-- TRANSPORT -->
+        <section class="transport" aria-label="Player controls">
+            <div class="transport__btns">
+                <button type="button" class="stampbtn" data-act="prev" aria-label="Previous track">
+                    <span class="stampbtn__ink">◀◀ {COPY.transport.prev}</span>
+                </button>
+                <button
+                    type="button"
+                    class="stampbtn stampbtn--go"
+                    data-act="playpause"
+                    aria-label="Play"
+                >
+                    <span class="stampbtn__ink" data-play-label>▶ {COPY.transport.play}</span>
+                </button>
+                <button type="button" class="stampbtn" data-act="next" aria-label="Next track">
+                    <span class="stampbtn__ink">{COPY.transport.next} ▶▶</span>
+                </button>
+            </div>
+
+            <p class="readout">
+                <span
+                    class="readout__status"
+                    data-status
+                    data-status-idle={COPY.status.idle}
+                    data-status-playing={COPY.status.playing}
+                    data-status-paused={COPY.status.paused}
+                    data-status-error={COPY.status.error}
+                    data-label-play={`▶ ${COPY.transport.play}`}
+                    data-label-pause={`❚❚ ${COPY.transport.pause}`}>{COPY.status.idle}</span
+                >
+                <span class="readout__now" data-now aria-live="polite"></span>
+                <span class="readout__time" data-clock aria-hidden="true">0:00&thinsp;/&thinsp;0:00</span>
+            </p>
+        </section>
+
+        <!-- STAMPS & SCRAWL -->
+        <section class="stamps" aria-label="Where to listen">
+            <a
+                class="stamp stamp--bc"
+                href={musicLinks.bandcamp}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                <span class="stamp--bc__lead">{COPY.stamps.bandcampLead} →</span>
+                <span class="stamp--bc__sub">{COPY.stamps.bandcampSub}</span>
+            </a>
+
+            <a
+                class="stamp stamp--yt"
+                href={musicLinks.youtube}
+                target="_blank"
+                rel="noopener noreferrer">{COPY.stamps.youtube} ↗</a
+            >
+
+            <span class="stamp stamp--ages" aria-hidden="true">{COPY.stamps.allAges}</span>
+            <span class="stamp stamp--adm" aria-hidden="true">{COPY.stamps.admission}</span>
+            <span class="scrawl" aria-hidden="true">{COPY.stamps.tissues}</span>
+        </section>
+
+        <footer class="colophon">
+            <a class="home" href="/">← {COPY.home}</a>
+        </footer>
+    </article>
+</section>
+
+<style>
+    /* ── tokens ───────────────────────────────────────────────────────── */
+    .flyer-page {
+        --paper: #f2efe6;
+        --paper-2: #e9e5d8;
+        --ink: #14110d;
+        --ink-soft: #3a342b;
+        --riso: #f0304d; /* the one accent — risograph red/pink */
+
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100%;
+        padding: clamp(1rem, 4vw, 3.5rem) clamp(0.75rem, 4vw, 2.5rem) 3rem;
+        box-sizing: border-box;
+    }
+
+    /* ── void backdrop ────────────────────────────────────────────────── */
+    .void {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+            radial-gradient(120% 90% at 50% 0%, #2a2018 0%, #17130f 55%, #0e0b08 100%);
+    }
+    .void::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.5;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── the paper ────────────────────────────────────────────────────── */
+    .flyer {
+        position: relative;
+        width: 100%;
+        max-width: 760px;
+        margin-top: 0.5rem;
+        padding: clamp(1.5rem, 5vw, 3.25rem) clamp(1.1rem, 5vw, 3rem) clamp(1.75rem, 5vw, 2.75rem);
+        background: var(--paper);
+        color: var(--ink);
+        text-shadow: none; /* kill the global drop shadow on the light paper */
+        transform: rotate(-1.15deg);
+        box-shadow:
+            10px 12px 0 rgba(0, 0, 0, 0.45),
+            0 26px 60px -18px rgba(0, 0, 0, 0.8);
+        transition: transform 0.35s ease;
+        overflow: hidden;
+        isolation: isolate;
+    }
+    .flyer:hover {
+        transform: rotate(-0.3deg);
+    }
+
+    /* photocopy grain + halftone printed onto the paper */
+    .flyer::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        mix-blend-mode: multiply;
+        opacity: 0.5;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+    .flyer::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.16;
+        mix-blend-mode: multiply;
+        background-image: radial-gradient(var(--ink) 32%, transparent 33%);
+        background-size: 5px 5px;
+    }
+    /* keep real content above the texture layers */
+    .flyer > *:not(.tape):not(.misprint) {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* neutralise the global h1-h6 / p hover (would flash white + rise) */
+    .flyer :is(h1, h2, h3, h4, h5, h6, p):hover {
+        color: inherit;
+        transform: none;
+    }
+
+    /* masking tape */
+    .tape {
+        position: absolute;
+        top: -0.7rem;
+        width: 118px;
+        height: 34px;
+        z-index: 3;
+        background: rgba(226, 220, 200, 0.55);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        backdrop-filter: none;
+    }
+    .tape::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.4;
+        mix-blend-mode: multiply;
+        background: repeating-linear-gradient(90deg, #0000 0 6px, #00000018 6px 7px);
+    }
+    .tape--tl {
+        left: 8%;
+        transform: rotate(-24deg);
+    }
+    .tape--tr {
+        right: 8%;
+        transform: rotate(19deg);
+    }
+
+    /* riso mis-registration stripe (quiet trans-flag nod) */
+    .misprint {
+        position: absolute;
+        top: 0;
+        right: 9%;
+        width: 6px;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.5;
+        mix-blend-mode: multiply;
+        background: linear-gradient(
+            to bottom,
+            #5bc0f0 0 20%,
+            #f6a8c9 20% 40%,
+            #f2efe6 40% 60%,
+            #f6a8c9 60% 80%,
+            #5bc0f0 80% 100%
+        );
+        box-shadow: -3px 0 0 rgba(240, 48, 77, 0.35);
+    }
+
+    /* xeroxed cat ears watermark */
+    .ears {
+        position: absolute;
+        top: clamp(1rem, 6vw, 3rem);
+        left: 50%;
+        width: clamp(230px, 62%, 460px);
+        transform: translateX(-50%) rotate(-2deg);
+        fill: var(--ink);
+        opacity: 0.07;
+        z-index: 0 !important;
+        pointer-events: none;
+    }
+
+    /* ── masthead ─────────────────────────────────────────────────────── */
+    .masthead {
+        text-align: center;
+    }
+    .presents {
+        margin: 0 0 0.5rem;
+        font-family: 'Special Elite', 'Courier New', monospace;
+        font-size: clamp(0.7rem, 2.4vw, 0.9rem);
+        letter-spacing: 0.04em;
+        color: var(--ink-soft);
+        text-transform: lowercase;
+    }
+
+    .ransom {
+        margin: 0.1rem 0 0.7rem;
+        line-height: 0.9;
+        font-weight: 400;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: baseline;
+        gap: 0.02em 0.04em;
+    }
+    .ransom__l {
+        display: inline-block;
+        font-family: var(--ff, 'Anton', sans-serif);
+        font-size: clamp(2.6rem, 12vw, 5.6rem);
+        transform: rotate(var(--rot, 0deg)) scale(var(--scl, 1));
+        color: var(--ink);
+        text-transform: uppercase;
+        line-height: 0.8;
+        padding: 0 0.02em;
+    }
+    .ransom__l--inv {
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.02em 0.1em;
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+    }
+
+    .subhead {
+        margin: 0.35rem auto 0.25rem;
+        max-width: 30ch;
+        font-family: 'Anton', Impact, sans-serif;
+        font-size: clamp(0.95rem, 3.4vw, 1.45rem);
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--ink);
+    }
+    .collection {
+        margin: 0.15rem auto 0;
+        max-width: 44ch;
+        font-family: 'Special Elite', monospace;
+        font-size: clamp(0.72rem, 2.4vw, 0.9rem);
+        color: var(--ink-soft);
+    }
+
+    /* ── setlist ──────────────────────────────────────────────────────── */
+    .setlist {
+        margin-top: clamp(1.4rem, 5vw, 2.4rem);
+    }
+    .setlist__label {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin: 0 0 0.6rem;
+        font-family: 'Anton', Impact, sans-serif;
+        font-size: clamp(1rem, 3.4vw, 1.35rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ink);
+    }
+    .setlist__rule {
+        flex: 1;
+        height: 4px;
+        background:
+            repeating-linear-gradient(90deg, var(--ink) 0 8px, transparent 8px 12px);
+    }
+
+    .tracks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border: 2.5px solid var(--ink);
+    }
+    .track {
+        position: relative;
+        border-bottom: 2px dashed rgba(20, 17, 13, 0.45);
+        overflow: hidden;
+    }
+    .track:last-child {
+        border-bottom: 0;
+    }
+
+    /* progress fill / redaction bar (advances across the whole row) */
+    .track__fill {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: var(--p, 0%);
+        z-index: 0;
+        opacity: 0;
+        pointer-events: none;
+        background: repeating-linear-gradient(46deg, #2b2620 0 3px, #17130f 3px 6px);
+        border-right: 3px solid var(--riso);
+    }
+    .track.is-current .track__fill {
+        opacity: 1;
+    }
+    .track.is-current {
+        background: #14110d; /* redaction */
+    }
+
+    .track__toggle {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 3.2em 1fr auto;
+        align-items: center;
+        gap: 0.6em;
+        width: 100%;
+        padding: 0.62em 0.9em;
+        background: transparent;
+        border: 0;
+        text-align: left;
+        cursor: pointer;
+        color: var(--ink);
+        font: inherit;
+    }
+    .track.is-current .track__toggle {
+        color: var(--paper);
+    }
+    .track__num {
+        font-family: 'Special Elite', monospace;
+        font-size: clamp(1rem, 3.6vw, 1.45rem);
+        font-weight: 700;
+        text-align: center;
+    }
+    .track__title {
+        font-family: 'Anton', Impact, sans-serif;
+        font-size: clamp(1rem, 4vw, 1.55rem);
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .track__time {
+        font-family: 'Special Elite', monospace;
+        font-size: clamp(0.75rem, 2.6vw, 0.95rem);
+        white-space: nowrap;
+        letter-spacing: 0.02em;
+    }
+    /* rough hover underline on the title */
+    .track:not(.is-current) .track__toggle:hover .track__title {
+        text-decoration: underline wavy var(--ink) 2px;
+        text-underline-offset: 3px;
+    }
+    .track:not(.is-current) .track__toggle:hover {
+        background: rgba(20, 17, 13, 0.06);
+    }
+
+    /* seek surface: sits over title+time on the CURRENT row only */
+    .track__seek {
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        bottom: 0;
+        left: 3.2em; /* number stays a toggle; the rest scrubs */
+        right: 0;
+        pointer-events: none;
+        cursor: ew-resize;
+        touch-action: none;
+    }
+    .track.is-current .track__seek {
+        pointer-events: auto;
+    }
+    .track__head {
+        position: absolute;
+        top: 12%;
+        bottom: 12%;
+        left: calc(var(--hp, 0%) - 1px);
+        width: 3px;
+        background: var(--riso);
+        opacity: 0;
+    }
+    .track.is-current .track__head {
+        opacity: 0.9;
+    }
+
+    /* ── transport ────────────────────────────────────────────────────── */
+    .transport {
+        margin-top: clamp(1.2rem, 4vw, 1.9rem);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.7rem 1rem;
+        justify-content: space-between;
+    }
+    .transport__btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+    }
+    .stampbtn {
+        font-family: 'Anton', Impact, sans-serif;
+        font-size: clamp(0.8rem, 2.8vw, 1rem);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.4em 0.85em;
+        color: var(--ink);
+        background: transparent;
+        border: 2.5px solid var(--ink);
+        cursor: pointer;
+        transform: rotate(-1.2deg);
+        transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
+    }
+    .stampbtn:nth-child(2) {
+        transform: rotate(0.8deg);
+    }
+    .stampbtn:nth-child(3) {
+        transform: rotate(-0.6deg);
+    }
+    /* uneven, ink-bled rubber-stamp edge */
+    .stampbtn__ink {
+        display: inline-block;
+        -webkit-text-stroke: 0.4px var(--ink);
+    }
+    .stampbtn--go {
+        background: var(--riso);
+        color: var(--paper);
+        border-color: var(--riso);
+    }
+    .stampbtn--go .stampbtn__ink {
+        -webkit-text-stroke: 0;
+    }
+    .stampbtn:hover {
+        background: var(--ink);
+        color: var(--paper);
+        transform: rotate(0deg) scale(1.03);
+    }
+    .stampbtn--go:hover {
+        background: #c31f3a;
+        border-color: #c31f3a;
+    }
+
+    .readout {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.1rem;
+        text-align: right;
+        font-family: 'Special Elite', monospace;
+    }
+    .readout__status {
+        font-size: clamp(0.68rem, 2.3vw, 0.82rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--riso);
+        font-weight: 700;
+    }
+    .readout__now {
+        font-size: clamp(0.85rem, 3vw, 1.1rem);
+        font-weight: 700;
+        color: var(--ink);
+        min-height: 1.1em;
+    }
+    .readout__time {
+        font-size: clamp(0.72rem, 2.4vw, 0.9rem);
+        color: var(--ink-soft);
+        letter-spacing: 0.04em;
+    }
+
+    /* ── stamps / scrawl ──────────────────────────────────────────────── */
+    .stamps {
+        margin-top: clamp(1.5rem, 5vw, 2.4rem);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.9rem 1.1rem;
+    }
+    .stamp {
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .stamp--bc {
+        flex: 1 1 260px;
+        display: block;
+        padding: 0.7em 1em;
+        border: 3px solid var(--riso);
+        color: var(--riso);
+        transform: rotate(-1.6deg);
+        box-shadow: 4px 4px 0 rgba(240, 48, 77, 0.25);
+        transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+    .stamp--bc__lead {
+        display: block;
+        font-family: 'Anton', Impact, sans-serif;
+        font-size: clamp(1.15rem, 4.6vw, 1.7rem);
+        line-height: 1;
+    }
+    .stamp--bc__sub {
+        display: block;
+        margin-top: 0.25em;
+        font-family: 'Special Elite', monospace;
+        font-size: clamp(0.66rem, 2.3vw, 0.82rem);
+        text-transform: none;
+        letter-spacing: 0;
+    }
+    .stamp--bc:hover {
+        background: var(--riso);
+        color: var(--paper);
+        transform: rotate(0deg) scale(1.02);
+    }
+
+    .stamp--yt {
+        font-family: 'Anton', Impact, sans-serif;
+        font-size: clamp(0.85rem, 3vw, 1.05rem);
+        color: var(--ink);
+        border: 2.5px solid var(--ink);
+        padding: 0.35em 0.7em;
+        transform: rotate(2deg);
+        transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+    .stamp--yt:hover {
+        background: var(--ink);
+        color: var(--paper);
+        transform: rotate(0deg);
+    }
+
+    .stamp--ages,
+    .stamp--adm {
+        font-family: 'Special Elite', monospace;
+        color: var(--ink);
+        border: 2px solid var(--ink);
+        padding: 0.35em 0.6em;
+        white-space: pre-line;
+        line-height: 1.15;
+        font-size: clamp(0.66rem, 2.4vw, 0.82rem);
+        letter-spacing: 0.02em;
+        border-radius: 50% / 46%;
+        opacity: 0.85;
+    }
+    .stamp--ages {
+        transform: rotate(-7deg);
+        color: var(--riso);
+        border-color: var(--riso);
+    }
+    .stamp--adm {
+        transform: rotate(3.5deg);
+        text-align: center;
+    }
+    .scrawl {
+        font-family: 'Special Elite', cursive;
+        font-size: clamp(0.9rem, 3.6vw, 1.2rem);
+        color: var(--ink-soft);
+        transform: rotate(-5deg);
+        text-decoration: underline wavy var(--riso) 1.5px;
+        text-underline-offset: 4px;
+    }
+
+    /* ── colophon / home ──────────────────────────────────────────────── */
+    .colophon {
+        margin-top: clamp(1.5rem, 5vw, 2.3rem);
+        padding-top: 0.8rem;
+        border-top: 2px dashed rgba(20, 17, 13, 0.4);
+        text-align: center;
+    }
+    .home {
+        font-family: 'Special Elite', monospace;
+        font-size: clamp(0.72rem, 2.6vw, 0.88rem);
+        color: var(--ink-soft);
+        text-decoration: none;
+        letter-spacing: 0.03em;
+    }
+    .home:hover {
+        color: var(--riso);
+        text-decoration: underline;
+    }
+
+    /* ── focus & motion ───────────────────────────────────────────────── */
+    .flyer :is(button, a, [role='slider']):focus-visible {
+        outline: 3px solid var(--riso);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 480px) {
+        .readout {
+            align-items: flex-start;
+            text-align: left;
+        }
+        .transport {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .track__toggle {
+            grid-template-columns: 2.4em 1fr auto;
+        }
+        .track__seek {
+            left: 2.4em;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .flyer,
+        .flyer:hover,
+        .stampbtn,
+        .stampbtn:hover,
+        .stamp--bc,
+        .stamp--bc:hover,
+        .stamp--yt,
+        .stamp--yt:hover {
+            transition: none;
+            transform: none;
+        }
+        .stampbtn:hover,
+        .stamp--bc:hover {
+            transform: scale(1.01);
+        }
+    }
+</style>
+
+<script>
+    import { MusicPlayer } from '@/features/music/audio-controller'
+    import { tracks } from '@/features/music/singy-songy-data'
+
+    const clock = (s: number) => {
+        if (!isFinite(s) || s < 0) s = 0
+        const m = Math.floor(s / 60)
+        const sec = Math.floor(s % 60)
+        return `${m}:${sec.toString().padStart(2, '0')}`
+    }
+
+    const root = document.querySelector<HTMLElement>('[data-flyer]')
+    if (root) {
+        const player = new MusicPlayer(tracks)
+
+        const rows = Array.from(root.querySelectorAll<HTMLLIElement>('.track'))
+        const toggles = Array.from(root.querySelectorAll<HTMLButtonElement>('.track__toggle'))
+        const fills = Array.from(root.querySelectorAll<HTMLElement>('.track__fill'))
+        const times = Array.from(root.querySelectorAll<HTMLElement>('.track__time'))
+        const seeks = Array.from(root.querySelectorAll<HTMLElement>('.track__seek'))
+        const heads = Array.from(root.querySelectorAll<HTMLElement>('.track__head'))
+
+        const statusEl = root.querySelector<HTMLElement>('[data-status]')
+        const nowEl = root.querySelector<HTMLElement>('[data-now]')
+        const clockEl = root.querySelector<HTMLElement>('[data-clock]')
+        const playLabel = root.querySelector<HTMLElement>('[data-play-label]')
+        const playBtn = root.querySelector<HTMLButtonElement>('[data-act="playpause"]')
+        const prevBtn = root.querySelector<HTMLButtonElement>('[data-act="prev"]')
+        const nextBtn = root.querySelector<HTMLButtonElement>('[data-act="next"]')
+
+        // status/transport strings come from the COPY block via data attributes
+        const ds = statusEl?.dataset ?? {}
+        const STATUS = {
+            playing: ds.statusPlaying ?? 'NOW PLAYING',
+            paused: ds.statusPaused ?? 'PAUSED',
+            idle: ds.statusIdle ?? 'PRESS PLAY',
+            error: ds.statusError ?? 'could not load',
+        }
+        const LABELS = {
+            play: ds.labelPlay ?? '▶ PLAY',
+            pause: ds.labelPause ?? '❚❚ PAUSE',
+        }
+
+        let curTime = 0
+        let curDur = 0
+
+        // per-track toggle (play / pause that track)
+        toggles.forEach((btn, i) => {
+            btn.addEventListener('click', () => player.toggle(i))
+        })
+
+        // transport
+        prevBtn?.addEventListener('click', () => player.prev())
+        nextBtn?.addEventListener('click', () => player.next())
+        playBtn?.addEventListener('click', () => player.toggle())
+
+        // seek — click/drag across the current row's bar
+        seeks.forEach((seek, i) => {
+            const fracFrom = (clientX: number): number => {
+                const r = seek.getBoundingClientRect()
+                if (r.width <= 0) return 0
+                return Math.min(Math.max((clientX - r.left) / r.width, 0), 1)
+            }
+            let dragging = false
+
+            seek.addEventListener('pointerdown', (e: PointerEvent) => {
+                if (player.current?.index !== i) return
+                dragging = true
+                seek.setPointerCapture(e.pointerId)
+                player.seek(fracFrom(e.clientX))
+                e.preventDefault()
+            })
+            seek.addEventListener('pointermove', (e: PointerEvent) => {
+                if (!dragging) return
+                player.seek(fracFrom(e.clientX))
+            })
+            const end = (e: PointerEvent) => {
+                if (!dragging) return
+                dragging = false
+                try {
+                    seek.releasePointerCapture(e.pointerId)
+                } catch {
+                    /* ignore */
+                }
+            }
+            seek.addEventListener('pointerup', end)
+            seek.addEventListener('pointercancel', end)
+
+            seek.addEventListener('keydown', (e: KeyboardEvent) => {
+                if (player.current?.index !== i || curDur <= 0) return
+                let next = curTime
+                const step = 5
+                if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = curTime + step
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = curTime - step
+                else if (e.key === 'Home') next = 0
+                else if (e.key === 'End') next = curDur
+                else return
+                e.preventDefault()
+                player.seek(Math.min(Math.max(next, 0), curDur) / curDur)
+            })
+        })
+
+        const setPlayLabel = (playing: boolean) => {
+            if (playLabel) playLabel.textContent = playing ? LABELS.pause : LABELS.play
+            playBtn?.setAttribute('aria-label', playing ? 'Pause' : 'Play')
+        }
+
+        const refreshToggleLabels = () => {
+            toggles.forEach((btn, i) => {
+                const t = tracks[i]
+                const isCur = player.current?.index === i
+                const label = isCur && player.isPlaying ? `Pause ${t.title}` : `Play ${t.title}`
+                btn.setAttribute('aria-label', label)
+            })
+        }
+
+        player.on('change', (t) => {
+            rows.forEach((row, i) => row.classList.toggle('is-current', i === t.index))
+            seeks.forEach((s, i) => {
+                const cur = i === t.index
+                s.setAttribute('tabindex', cur ? '0' : '-1')
+                s.setAttribute('aria-hidden', cur ? 'false' : 'true')
+            })
+            fills.forEach((f, i) => {
+                if (i !== t.index) {
+                    f.style.setProperty('--p', '0%')
+                    heads[i]?.style.setProperty('--hp', '0%')
+                }
+            })
+            // reset non-current time displays to their static duration
+            times.forEach((el, i) => {
+                if (i !== t.index) el.textContent = clock(tracks[i].duration)
+            })
+            curTime = 0
+            curDur = t.duration
+            if (nowEl) nowEl.textContent = t.title
+            if (clockEl) clockEl.innerHTML = `0:00&thinsp;/&thinsp;${clock(t.duration)}`
+            refreshToggleLabels()
+        })
+
+        player.on('play', (t) => {
+            root.classList.add('is-playing')
+            setPlayLabel(true)
+            if (statusEl) statusEl.textContent = STATUS.playing
+            if (nowEl) nowEl.textContent = t.title
+            refreshToggleLabels()
+        })
+
+        player.on('pause', () => {
+            root.classList.remove('is-playing')
+            setPlayLabel(false)
+            if (statusEl) statusEl.textContent = STATUS.paused
+            refreshToggleLabels()
+        })
+
+        player.on('stop', () => {
+            root.classList.remove('is-playing')
+            setPlayLabel(false)
+            if (statusEl) statusEl.textContent = STATUS.idle
+            refreshToggleLabels()
+        })
+
+        player.on('time', (ct, dur, p) => {
+            curTime = ct
+            const d = isFinite(dur) && dur > 0 ? dur : curDur
+            curDur = d
+            const idx = player.current?.index
+            if (idx != null) {
+                const pct = `${Math.min(Math.max(p, 0), 1) * 100}%`
+                fills[idx]?.style.setProperty('--p', pct)
+                heads[idx]?.style.setProperty('--hp', pct)
+                if (times[idx]) times[idx].textContent = `${clock(ct)} / ${clock(d)}`
+                const s = seeks[idx]
+                if (s) {
+                    const v = Math.round(Math.min(Math.max(p, 0), 1) * 100)
+                    s.setAttribute('aria-valuenow', String(v))
+                    s.setAttribute('aria-valuetext', `${clock(ct)} of ${clock(d)}`)
+                }
+            }
+            if (clockEl) clockEl.innerHTML = `${clock(ct)}&thinsp;/&thinsp;${clock(d)}`
+        })
+
+        player.on('error', (t) => {
+            root.classList.remove('is-playing')
+            setPlayLabel(false)
+            if (statusEl) statusEl.textContent = `${STATUS.error} ${t.title}`
+        })
+
+        // preload the first track so the flyer opens "cued" (no autoplay)
+        player.select(0)
+    }
+</script>

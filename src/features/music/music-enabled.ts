@@ -1,2 +1,2 @@
-// Flip this back to true when the music section should be public again.
-export const isMusicEnabled = false
+// Flip this to false to tuck the music section away again.
+export const isMusicEnabled = true

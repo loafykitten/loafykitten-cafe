@@ -1,0 +1,991 @@
+---
+import { Image } from 'astro:assets'
+import avatar from '@/assets/images/aspect-music.png'
+import { tracks, musicLinks, formatDuration } from '@/features/music/singy-songy-data'
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  EDITABLE COPY — everything a human sees. tweak freely, order of POST_COPY
+//  matches the track order (8 entries).
+// ─────────────────────────────────────────────────────────────────────────────
+const COPY = {
+    homeLink: '← home',
+    feedTitle: 'feed',
+
+    profile: {
+        displayName: 'loafy',
+        handle: '@loafykitten',
+        bio: 'hip-hop & alt emo pop · professional feelings-haver · ears are real',
+        stats: [
+            { value: '8', label: 'songs' },
+            { value: '∞', label: 'feelings' },
+            { value: '2am', label: 'usual post time' },
+        ],
+    },
+
+    pinned: {
+        tag: '📌 pinned',
+        headline: 'the whole album is free on bandcamp. free. just take it.',
+        subline: 'name-your-price starts at $0. you don’t owe me anything. (you can pay if you want, i won’t stop you.)',
+        bandcampCta: 'download the album free →',
+        youtubeLine: 'or just vibe on the youtube channel, i post there too obviously',
+        youtubeCta: 'youtube channel',
+    },
+
+    // played once, spoken to the whole timeline
+    repostLabel: 'repost to feel something',
+    replyWord: 'in the replies',
+    cryingWord: 'crying',
+
+    // one entry per track, in order. captions are generic-emotional on purpose —
+    // never claiming what a specific song is "about".
+    posts: [
+        {
+            caption: 'dropping this instead of going to therapy (i also go to therapy, relax)',
+            timestamp: '3:12 am · posted instead of sleeping',
+            crying: 41200,
+            replies: 3800,
+        },
+        {
+            caption: 'made this at some cursed hour, felt a feeling, hit render, no notes',
+            timestamp: '4:47 am · the honey hours',
+            crying: 22900,
+            replies: 1600,
+        },
+        {
+            caption: 'posting this instead of answering your text. i’m so sorry. i love you though',
+            timestamp: '2:03 am · should be asleep',
+            crying: 58100,
+            replies: 6200,
+        },
+        {
+            caption: 'recorded this then lay face-down on the floor for a while. normal artist behaviour',
+            timestamp: '1:59 am · one minute to spiral',
+            crying: 33400,
+            replies: 2100,
+        },
+        {
+            caption: 'this one lives rent free in my chest. enjoy my rent free feelings ♡',
+            timestamp: '3:33 am · make a wish',
+            crying: 47700,
+            replies: 4400,
+        },
+        {
+            caption: 'wrote it, cried, added a beat, cried again. the creative process™',
+            timestamp: '5:01 am · sun’s coming up help',
+            crying: 61500,
+            replies: 7900,
+        },
+        {
+            caption: 'for anyone who needed a song today. it’s giving “you’re allowed to be here.” you’re welcome',
+            timestamp: '11:11 pm · manifesting',
+            crying: 38900,
+            replies: 2900,
+        },
+        {
+            caption: 'the comma is on purpose. yes it means something. no i won’t explain. ok maybe a little',
+            timestamp: '4:04 am · feeling not found',
+            crying: 72300,
+            replies: 9100,
+        },
+    ],
+} as const
+
+const external = { target: '_blank', rel: 'noopener noreferrer' } as const
+
+// compact "41.2k" style number for the static server render
+const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`)
+---
+
+<section class="feed" aria-label="loafykitten music feed">
+    <div class="feed__bg" aria-hidden="true"></div>
+
+    <div class="feed__col">
+        <!-- top nav -->
+        <nav class="topbar">
+            <a class="topbar__home" href="/">{COPY.homeLink}</a>
+            <span class="topbar__title">{COPY.feedTitle}</span>
+        </nav>
+
+        <!-- profile header -->
+        <header class="profile">
+            <div class="profile__avatar">
+                <Image src={avatar} alt="loafykitten, a cat-eared avatar" width={96} height={96} />
+            </div>
+            <div class="profile__id">
+                <p class="profile__name">
+                    {COPY.profile.displayName}
+                    <span class="profile__badge" title="verified feelings-haver" aria-label="verified">
+                        <svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true">
+                            <path
+                                fill="currentColor"
+                                d="M8.3 13.6 5.2 10.5l1.1-1.1 2 2 4.4-4.4 1.1 1.1z"
+                            ></path>
+                        </svg>
+                    </span>
+                </p>
+                <p class="profile__handle">{COPY.profile.handle}</p>
+            </div>
+            <p class="profile__bio">{COPY.profile.bio}</p>
+            <ul class="profile__stats">
+                {
+                    COPY.profile.stats.map((s) => (
+                        <li>
+                            <strong>{s.value}</strong> {s.label}
+                        </li>
+                    ))
+                }
+            </ul>
+        </header>
+
+        <!-- pinned post: FREE album -->
+        <article class="post post--pinned">
+            <span class="pin">{COPY.pinned.tag}</span>
+            <div class="post__head">
+                <div class="post__avatar">
+                    <Image src={avatar} alt="" width={44} height={44} />
+                </div>
+                <div class="post__who">
+                    <span class="post__name">{COPY.profile.displayName}</span>
+                    <span class="post__handle">{COPY.profile.handle}</span>
+                </div>
+            </div>
+            <p class="pinned__headline">{COPY.pinned.headline}</p>
+            <p class="pinned__subline">{COPY.pinned.subline}</p>
+            <div class="pinned__actions">
+                <a class="btn btn--primary" href={musicLinks.bandcamp} {...external}>
+                    {COPY.pinned.bandcampCta}
+                </a>
+                <p class="pinned__yt">
+                    {COPY.pinned.youtubeLine}
+                    <a class="btn btn--ghost" href={musicLinks.youtube} {...external}>
+                        {COPY.pinned.youtubeCta}
+                    </a>
+                </p>
+            </div>
+        </article>
+
+        <!-- one post per track -->
+        {
+            tracks.map((track, i) => {
+                const post = COPY.posts[i]
+                return (
+                    <article class="post" data-index={i}>
+                        <div class="post__head">
+                            <div class="post__avatar">
+                                <Image src={avatar} alt="" width={44} height={44} />
+                            </div>
+                            <div class="post__who">
+                                <span class="post__name">{COPY.profile.displayName}</span>
+                                <span class="post__handle">{COPY.profile.handle}</span>
+                                <span class="post__dot">·</span>
+                                <span class="post__time">{post.timestamp}</span>
+                            </div>
+                            <span class="post__playing-tag" aria-hidden="true">now playing</span>
+                        </div>
+
+                        <p class="post__caption">{post.caption}</p>
+
+                        <div class="attach">
+                            <button
+                                type="button"
+                                class="attach__play"
+                                aria-label={`Play ${track.title}`}
+                                data-play={i}
+                            >
+                                <svg class="ic ic--play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                                    <path fill="currentColor" d="M7 4.5v15a1 1 0 0 0 1.5.87l12-7.5a1 1 0 0 0 0-1.74l-12-7.5A1 1 0 0 0 7 4.5z" />
+                                </svg>
+                                <svg class="ic ic--pause" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                                    <rect fill="currentColor" x="5" y="4" width="5" height="16" rx="1.4" />
+                                    <rect fill="currentColor" x="14" y="4" width="5" height="16" rx="1.4" />
+                                </svg>
+                            </button>
+
+                            <div class="attach__body">
+                                <div class="attach__top">
+                                    <span class="attach__title">{track.title}</span>
+                                    <span class="attach__eq" aria-hidden="true">
+                                        <i /><i /><i /><i /><i />
+                                    </span>
+                                </div>
+
+                                <input
+                                    type="range"
+                                    class="attach__seek"
+                                    min="0"
+                                    max="100"
+                                    step="0.1"
+                                    value="0"
+                                    disabled
+                                    aria-label={`Seek within ${track.title}`}
+                                    data-seek={i}
+                                />
+
+                                <div class="attach__times">
+                                    <span class="attach__cur" data-cur={i}>0:00</span>
+                                    <span class="attach__dur" data-dur={i}>{formatDuration(track.duration)}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="engage" aria-hidden="true">
+                            <span class="engage__item">
+                                <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M12 3c3 4 6 6.5 6 10a6 6 0 0 1-12 0c0-3.5 3-6 6-10z" /></svg>
+                                <b class="engage__crying" data-crying={i} data-raw={post.crying}>{compact(post.crying)}</b> {COPY.cryingWord}
+                            </span>
+                            <span class="engage__item engage__item--repost">
+                                <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M7 7h9l-2-2 1.4-1.4L19.8 8l-4.4 4.4L14 11l2-2H7v3H5V7h2zm10 10H8l2 2-1.4 1.4L4.2 16l4.4-4.4L10 13l-2 2h9v-3h2v6h-2z" /></svg>
+                                {COPY.repostLabel}
+                            </span>
+                            <span class="engage__item">
+                                <svg viewBox="0 0 24 24" width="15" height="15"><path fill="currentColor" d="M4 4h16v11H8l-4 4V4z" /></svg>
+                                <b>{compact(post.replies)}</b> {COPY.replyWord}
+                            </span>
+                        </div>
+                    </article>
+                )
+            })
+        }
+
+        <p class="feed__end">you’ve reached the end of the feed. go outside. or don’t. i’m not your mom.</p>
+    </div>
+</section>
+
+<style is:global>
+    body {
+        background: radial-gradient(1200px 700px at 50% -10%, #16121c 0%, #0b0b0f 60%, #08080b 100%);
+        --footer-bg: rgba(9, 9, 13, 0.82);
+    }
+</style>
+
+<style>
+    .feed {
+        --accent: #f2a24e; /* warm amber */
+        --accent-soft: rgba(242, 162, 78, 0.16);
+        --ink: #f2f2f4;
+        --dim: #9a9aa6;
+        --dimmer: #6a6a76;
+        --line: rgba(255, 255, 255, 0.08);
+        --card: #131319;
+        --card-hi: #17171f;
+
+        position: relative;
+        width: 100%;
+        min-height: 100%;
+        color: var(--ink);
+        text-shadow: none;
+        font-size: 15px;
+        line-height: 1.45;
+    }
+
+    /* neutralise the global h1-h6/p hover effect inside the feed */
+    .feed :is(h1, h2, h3, h4, h5, h6, p):hover {
+        transform: none;
+        color: inherit;
+    }
+
+    .feed__bg {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+            radial-gradient(700px 500px at 80% 8%, rgba(91, 206, 250, 0.05), transparent 60%),
+            radial-gradient(700px 500px at 10% 30%, rgba(245, 169, 184, 0.05), transparent 60%);
+        pointer-events: none;
+    }
+
+    .feed__col {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 14px 3rem;
+        box-sizing: border-box;
+    }
+
+    /* ── top nav ── */
+    .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.85rem 0.25rem;
+        margin-bottom: 0.4rem;
+        background: linear-gradient(to bottom, rgba(11, 11, 15, 0.96), rgba(11, 11, 15, 0.72));
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--line);
+    }
+    .topbar__home {
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 6px 10px;
+        border-radius: 999px;
+        transition: background 0.18s ease;
+    }
+    .topbar__home:hover {
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--ink);
+    }
+    .topbar__home:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+    .topbar__title {
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 0.01em;
+    }
+
+    /* ── profile header ── */
+    .profile {
+        padding: 0.6rem 0.4rem 1.1rem;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 0.2rem;
+    }
+    .profile__avatar {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid #0b0b0f;
+        box-shadow: 0 0 0 1px var(--line), 0 6px 20px rgba(0, 0, 0, 0.5);
+        background: var(--card);
+    }
+    .profile__avatar :global(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .profile__id {
+        margin-top: 0.7rem;
+    }
+    .profile__name {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .profile__badge {
+        display: inline-flex;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        color: #0b0b0f;
+        background: linear-gradient(135deg, #5bcefa, #f5a9b8 55%, #ffffff);
+    }
+    .profile__handle {
+        color: var(--dim);
+        font-size: 0.95rem;
+        margin-top: 1px;
+    }
+    .profile__bio {
+        margin-top: 0.7rem;
+        color: #d7d7dd;
+        font-size: 0.95rem;
+    }
+    .profile__stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.1rem;
+        list-style: none;
+        padding: 0;
+        margin: 0.85rem 0 0;
+        font-size: 0.9rem;
+        color: var(--dim);
+    }
+    .profile__stats strong {
+        color: var(--ink);
+        font-weight: 700;
+    }
+
+    /* ── posts ── */
+    .post {
+        position: relative;
+        padding: 1rem 0.4rem;
+        border-bottom: 1px solid var(--line);
+        transition: background 0.2s ease;
+    }
+    .post[data-index]:hover {
+        background: rgba(255, 255, 255, 0.015);
+    }
+
+    .post--pinned {
+        margin-top: 0.4rem;
+        padding: 1.1rem 0.9rem;
+        border: 1px solid rgba(242, 162, 78, 0.28);
+        border-radius: 16px;
+        background: linear-gradient(180deg, rgba(242, 162, 78, 0.06), rgba(255, 255, 255, 0.012));
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    }
+    .pin {
+        display: inline-block;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 0.6rem;
+        letter-spacing: 0.01em;
+    }
+
+    .post__head {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .post__avatar {
+        flex: 0 0 auto;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        background: var(--card);
+    }
+    .post__avatar :global(img) {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .post__who {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        min-width: 0;
+        font-size: 0.92rem;
+    }
+    .post__name {
+        font-weight: 700;
+    }
+    .post__handle,
+    .post__dot,
+    .post__time {
+        color: var(--dim);
+        font-weight: 400;
+    }
+    .post__time {
+        font-size: 0.85rem;
+    }
+    .post__playing-tag {
+        margin-left: auto;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        white-space: nowrap;
+    }
+    .post[data-playing] .post__playing-tag {
+        opacity: 1;
+    }
+
+    .post__caption {
+        margin: 0.6rem 0 0.8rem;
+        font-size: 1rem;
+        color: #e9e9ee;
+        line-height: 1.5;
+    }
+
+    /* now-playing accent on the whole card */
+    .post[data-current] {
+        background: rgba(242, 162, 78, 0.045);
+    }
+    .post[data-playing] {
+        box-shadow: inset 3px 0 0 var(--accent);
+    }
+
+    /* ── audio attachment card ── */
+    .attach {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.85rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        transition:
+            border-color 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+    .post[data-playing] .attach {
+        border-color: rgba(242, 162, 78, 0.5);
+        box-shadow: 0 0 0 1px rgba(242, 162, 78, 0.25), 0 0 22px rgba(242, 162, 78, 0.12);
+    }
+
+    .attach__play {
+        flex: 0 0 auto;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #0b0b0f;
+        background: var(--ink);
+        transition:
+            transform 0.14s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+    .attach__play:hover {
+        background: #fff;
+    }
+    .attach__play:active {
+        transform: scale(0.93);
+    }
+    .attach__play:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+    }
+    .post[data-playing] .attach__play {
+        background: var(--accent);
+        box-shadow: 0 0 18px rgba(242, 162, 78, 0.4);
+    }
+    .attach__play .ic {
+        display: block;
+    }
+    .attach__play .ic--play {
+        margin-left: 3px; /* optical centering of the triangle */
+    }
+    .attach__play .ic--pause {
+        display: none;
+    }
+    .post[data-playing] .attach__play .ic--play {
+        display: none;
+    }
+    .post[data-playing] .attach__play .ic--pause {
+        display: block;
+        margin: 0;
+    }
+
+    .attach__body {
+        flex: 1;
+        min-width: 0;
+    }
+    .attach__top {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    .attach__title {
+        font-weight: 700;
+        font-size: 0.98rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .post[data-playing] .attach__title {
+        color: var(--accent);
+    }
+
+    /* equalizer bars — only animate while playing */
+    .attach__eq {
+        display: none;
+        align-items: flex-end;
+        gap: 2px;
+        height: 14px;
+    }
+    .post[data-playing] .attach__eq {
+        display: inline-flex;
+    }
+    .attach__eq i {
+        width: 3px;
+        height: 100%;
+        border-radius: 2px;
+        background: var(--accent);
+        transform-origin: bottom;
+        animation: eq 0.9s ease-in-out infinite;
+    }
+    .attach__eq i:nth-child(2) { animation-delay: 0.15s; }
+    .attach__eq i:nth-child(3) { animation-delay: 0.3s; }
+    .attach__eq i:nth-child(4) { animation-delay: 0.45s; }
+    .attach__eq i:nth-child(5) { animation-delay: 0.6s; }
+    @keyframes eq {
+        0%, 100% { transform: scaleY(0.3); }
+        50% { transform: scaleY(1); }
+    }
+
+    /* seek slider */
+    .attach__seek {
+        width: 100%;
+        height: 5px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+        outline: none;
+        margin: 0;
+    }
+    .attach__seek:disabled {
+        cursor: default;
+    }
+    .attach__seek::-webkit-slider-runnable-track {
+        height: 5px;
+        border-radius: 3px;
+        background: linear-gradient(
+            to right,
+            var(--accent) 0%,
+            var(--accent) var(--seek, 0%),
+            rgba(255, 255, 255, 0.1) var(--seek, 0%),
+            rgba(255, 255, 255, 0.1) 100%
+        );
+    }
+    .attach__seek::-moz-range-track {
+        height: 5px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .attach__seek::-moz-range-progress {
+        height: 5px;
+        border-radius: 3px;
+        background: var(--accent);
+    }
+    .attach__seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #fff;
+        margin-top: -4px;
+        opacity: 0;
+        transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .attach__seek::-moz-range-thumb {
+        width: 13px;
+        height: 13px;
+        border: none;
+        border-radius: 50%;
+        background: #fff;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+    .attach:hover .attach__seek:not(:disabled)::-webkit-slider-thumb,
+    .attach__seek:not(:disabled):active::-webkit-slider-thumb,
+    .attach__seek:focus-visible::-webkit-slider-thumb {
+        opacity: 1;
+    }
+    .attach:hover .attach__seek:not(:disabled)::-moz-range-thumb,
+    .attach__seek:focus-visible::-moz-range-thumb {
+        opacity: 1;
+    }
+    .attach__seek:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+        border-radius: 3px;
+    }
+
+    .attach__times {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.35rem;
+        font-size: 0.72rem;
+        color: var(--dimmer);
+        font-variant-numeric: tabular-nums;
+        font-family: 'Fira Code', ui-monospace, monospace;
+    }
+
+    /* ── engagement row (decorative, non-focusable) ── */
+    .engage {
+        display: flex;
+        gap: 1.4rem;
+        margin-top: 0.75rem;
+        padding-left: 0.1rem;
+        font-size: 0.8rem;
+        color: var(--dimmer);
+        user-select: none;
+    }
+    .engage__item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .engage__item svg {
+        opacity: 0.75;
+    }
+    .engage__item b {
+        color: var(--dim);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+    .engage__item--repost {
+        font-style: italic;
+    }
+    .post[data-playing] .engage__crying {
+        color: var(--accent);
+    }
+
+    /* ── pinned actions ── */
+    .pinned__headline {
+        font-size: 1.15rem;
+        font-weight: 800;
+        line-height: 1.35;
+        margin: 0.2rem 0 0.4rem;
+        letter-spacing: -0.01em;
+    }
+    .pinned__subline {
+        color: var(--dim);
+        font-size: 0.9rem;
+        margin: 0 0 0.9rem;
+    }
+    .pinned__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+    }
+    .pinned__yt {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--dim);
+        margin: 0;
+    }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-weight: 700;
+        border-radius: 999px;
+        transition:
+            transform 0.14s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease,
+            border-color 0.2s ease;
+    }
+    .btn:active {
+        transform: scale(0.98);
+    }
+    .btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+    .btn--primary {
+        padding: 0.8rem 1.2rem;
+        color: #0b0b0f;
+        background: var(--accent);
+        font-size: 1rem;
+        box-shadow: 0 6px 18px rgba(242, 162, 78, 0.25);
+    }
+    .btn--primary:hover {
+        background: #ffb75f;
+        color: #0b0b0f;
+        box-shadow: 0 8px 24px rgba(242, 162, 78, 0.4);
+    }
+    .btn--ghost {
+        padding: 0.4rem 0.85rem;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.03);
+        font-size: 0.85rem;
+    }
+    .btn--ghost:hover {
+        color: var(--ink);
+        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.07);
+    }
+
+    .feed__end {
+        text-align: center;
+        color: var(--dimmer);
+        font-size: 0.85rem;
+        padding: 1.6rem 1rem 0.5rem;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 480px) {
+        .feed {
+            font-size: 14.5px;
+        }
+        .feed__col {
+            padding: 0 10px 2.5rem;
+        }
+        .profile__avatar {
+            width: 72px;
+            height: 72px;
+        }
+        .profile__name {
+            font-size: 1.2rem;
+        }
+        .attach {
+            gap: 0.7rem;
+            padding: 0.7rem;
+        }
+        .attach__play {
+            width: 46px;
+            height: 46px;
+        }
+        .engage {
+            gap: 1rem;
+            font-size: 0.75rem;
+        }
+        .post__playing-tag {
+            display: none;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .attach__eq i {
+            animation: none;
+            transform: scaleY(0.6);
+        }
+        .btn,
+        .attach__play,
+        .post,
+        .topbar__home {
+            transition: none;
+        }
+    }
+</style>
+
+<script>
+    import { MusicPlayer } from '@/features/music/audio-controller'
+    import { tracks } from '@/features/music/singy-songy-data'
+
+    const feed = document.querySelector<HTMLElement>('.feed')
+    if (feed) {
+        const player = new MusicPlayer(tracks)
+        const posts = [...feed.querySelectorAll<HTMLElement>('.post[data-index]')]
+
+        const fmt = (s: number) => {
+            if (!Number.isFinite(s)) return '0:00'
+            const m = Math.floor(s / 60)
+            const sec = Math.floor(s % 60)
+            return `${m}:${sec.toString().padStart(2, '0')}`
+        }
+        const compact = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : `${n}`)
+
+        const postFor = (index: number): HTMLElement | null =>
+            posts.find((p) => Number(p.dataset.index) === index) ?? null
+
+        // wire each post's play button + seek slider
+        for (const post of posts) {
+            const index = Number(post.dataset.index)
+
+            const playBtn = post.querySelector<HTMLButtonElement>('.attach__play')
+            playBtn?.addEventListener('click', () => player.toggle(index))
+
+            const seek = post.querySelector<HTMLInputElement>('.attach__seek')
+            const cur = post.querySelector<HTMLElement>('.attach__cur')
+            if (seek) {
+                // live preview while scrubbing, without fighting the time event
+                seek.addEventListener('input', () => {
+                    const pct = Number(seek.value)
+                    seek.style.setProperty('--seek', `${pct}%`)
+                    const track = tracks[index]
+                    if (cur && track) cur.textContent = fmt((pct / 100) * track.duration)
+                })
+                seek.addEventListener('change', () => {
+                    if (index === player.current?.index) {
+                        player.seek(Number(seek.value) / 100)
+                    }
+                })
+            }
+        }
+
+        // gag: crying count ticks up while a post is playing
+        let tick: ReturnType<typeof setInterval> | null = null
+        const stopTick = () => {
+            if (tick !== null) {
+                clearInterval(tick)
+                tick = null
+            }
+        }
+        const startTick = (post: HTMLElement) => {
+            stopTick()
+            const el = post.querySelector<HTMLElement>('.engage__crying')
+            if (!el) return
+            tick = setInterval(() => {
+                const raw = Number(el.dataset.raw ?? '0') + Math.floor(Math.random() * 7) + 1
+                el.dataset.raw = String(raw)
+                el.textContent = compact(raw)
+            }, 1400)
+        }
+
+        // ── player events ──
+        player.on('change', (track) => {
+            stopTick()
+            for (const post of posts) {
+                const isCurrent = Number(post.dataset.index) === track.index
+                post.toggleAttribute('data-current', isCurrent)
+                post.removeAttribute('data-playing')
+
+                const seek = post.querySelector<HTMLInputElement>('.attach__seek')
+                const cur = post.querySelector<HTMLElement>('.attach__cur')
+                if (seek) {
+                    seek.disabled = !isCurrent
+                    if (!isCurrent) {
+                        seek.value = '0'
+                        seek.style.setProperty('--seek', '0%')
+                    }
+                }
+                if (cur && !isCurrent) cur.textContent = '0:00'
+            }
+        })
+
+        player.on('play', (track) => {
+            const post = postFor(track.index)
+            if (post) {
+                post.setAttribute('data-playing', '')
+                const btn = post.querySelector<HTMLButtonElement>('.attach__play')
+                btn?.setAttribute('aria-label', `Pause ${track.title}`)
+                startTick(post)
+            }
+        })
+
+        const clearPlaying = (track: { index: number; title: string }) => {
+            const post = postFor(track.index)
+            if (post) {
+                post.removeAttribute('data-playing')
+                const btn = post.querySelector<HTMLButtonElement>('.attach__play')
+                btn?.setAttribute('aria-label', `Play ${track.title}`)
+            }
+            stopTick()
+        }
+        player.on('pause', clearPlaying)
+        player.on('stop', clearPlaying)
+
+        player.on('time', (currentTime, duration, progress) => {
+            const post = player.current ? postFor(player.current.index) : null
+            if (!post) return
+            const seek = post.querySelector<HTMLInputElement>('.attach__seek')
+            const cur = post.querySelector<HTMLElement>('.attach__cur')
+            const dur = post.querySelector<HTMLElement>('.attach__dur')
+            const pct = Math.min(Math.max(progress, 0), 1) * 100
+            // don't yank the thumb out from under an active scrub
+            if (seek && document.activeElement !== seek) {
+                seek.value = String(pct)
+                seek.style.setProperty('--seek', `${pct}%`)
+            }
+            if (cur) cur.textContent = fmt(currentTime)
+            if (dur && Number.isFinite(duration) && duration > 0) dur.textContent = fmt(duration)
+        })
+
+        player.on('error', (track) => {
+            const post = postFor(track.index)
+            const title = post?.querySelector<HTMLElement>('.attach__title')
+            if (title) {
+                const original = title.textContent
+                title.textContent = 'failed to load :('
+                setTimeout(() => {
+                    title.textContent = original
+                }, 2200)
+            }
+            stopTick()
+        })
+    }
+</script>

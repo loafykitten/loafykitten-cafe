@@ -1,0 +1,26 @@
+---
+import type { MusicDesignId } from '@/features/music/design-config'
+import BurnedDisc from '@/features/music/designs/BurnedDisc.astro'
+import Scrapbook from '@/features/music/designs/Scrapbook.astro'
+import ShitpostFeed from '@/features/music/designs/ShitpostFeed.astro'
+import VoiceMemos from '@/features/music/designs/VoiceMemos.astro'
+import ZineFlyer from '@/features/music/designs/ZineFlyer.astro'
+
+interface Props {
+    design: MusicDesignId
+}
+
+const { design } = Astro.props
+
+const components: Record<MusicDesignId, typeof VoiceMemos> = {
+    'voice-memos': VoiceMemos,
+    'shitpost-feed': ShitpostFeed,
+    'burned-cd': BurnedDisc,
+    scrapbook: Scrapbook,
+    'zine-flyer': ZineFlyer,
+}
+
+const Design = components[design]
+---
+
+<Design />
