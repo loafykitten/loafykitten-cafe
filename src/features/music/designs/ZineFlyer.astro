@@ -36,7 +36,7 @@ const COPY = {
 
 /* Ransom-note letter recipe. Cycled across the headliner so every letter
    gets a different font / rotation, and a few get inverted (black block). */
-type Ransom = { font: string; rot: number; invert: boolean; scale: number }
+type Ransom = { font: string; rot: number; invert: boolean; scale: number; red?: boolean }
 const RANSOM: Ransom[] = [
     { font: "'Anton', Impact, sans-serif", rot: -4, invert: false, scale: 1.02 },
     { font: 'Georgia, serif', rot: 3, invert: true, scale: 0.9 },
@@ -44,7 +44,7 @@ const RANSOM: Ransom[] = [
     { font: "'Special Elite', 'Courier New', monospace", rot: 5, invert: false, scale: 0.9 },
     { font: "'Arial Black', Arial, sans-serif", rot: -3, invert: false, scale: 1.0 },
     { font: 'Georgia, serif', rot: 4, invert: false, scale: 0.96 },
-    { font: "'Anton', Impact, sans-serif", rot: -5, invert: true, scale: 0.94 },
+    { font: "'Anton', Impact, sans-serif", rot: -5, invert: true, scale: 0.94, red: true },
     { font: "'Courier New', monospace", rot: 2, invert: false, scale: 0.98 },
 ]
 const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.length] }))
@@ -74,11 +74,36 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         <!-- subtle riso mis-registration stripe (a quiet trans-flag nod) -->
         <span class="misprint" aria-hidden="true"></span>
 
-        <!-- big grainy xeroxed cat-ears watermark -->
-        <svg class="ears" viewBox="0 0 240 130" aria-hidden="true">
-            <path
-                d="M14 128 C 20 58, 44 20, 84 12 C 70 50, 70 92, 92 128 Z M226 128 C 220 58, 196 20, 156 12 C 170 50, 170 92, 148 128 Z"
-            ></path>
+        <!-- big grainy xeroxed watermark: fluffy ears -->
+        <svg class="ears" viewBox="0 0 240 140" aria-hidden="true">
+            <g transform="rotate(-7 62 78)">
+                <path
+                    class="ears__fur"
+                    d="M18 112 L17 105 L23 101 L20 94 L27 91 L27 84 L32 80 L30 73 L37 70 L36 63
+                       L42 59 L41 53 L46 48 L45 42 L51 38 L49 31 L56 27 L58 22 L65 25 L64 32
+                       L69 36 L69 42 L76 45 L75 52 L82 55 L81 62 L86 66 L86 73 L93 76 L92 83
+                       L99 85 L98 93 L103 96 L103 103 L106 108 L98 111 L90 109 L82 113 L74 109
+                       L66 113 L58 110 L50 116 L42 111 L34 114 L26 112 L18 112 Z"
+                ></path>
+                <path
+                    class="ears__inner"
+                    d="M36 98 C 42 72, 50 50, 58 36 C 66 51, 75 73, 80 96 C 66 106, 48 107, 36 98 Z"
+                ></path>
+            </g>
+            <g transform="translate(240 0) scale(-1 1) rotate(-7 62 78)">
+                <path
+                    class="ears__fur"
+                    d="M18 112 L17 105 L23 101 L20 94 L27 91 L27 84 L32 80 L30 73 L37 70 L36 63
+                       L42 59 L41 53 L46 48 L45 42 L51 38 L49 31 L56 27 L58 22 L65 25 L64 32
+                       L69 36 L69 42 L76 45 L75 52 L82 55 L81 62 L86 66 L86 73 L93 76 L92 83
+                       L99 85 L98 93 L103 96 L103 103 L106 108 L98 111 L90 109 L82 113 L74 109
+                       L66 113 L58 110 L50 116 L42 111 L34 114 L26 112 L18 112 Z"
+                ></path>
+                <path
+                    class="ears__inner"
+                    d="M36 98 C 42 72, 50 50, 58 36 C 66 51, 75 73, 80 96 C 66 106, 48 107, 36 98 Z"
+                ></path>
+            </g>
         </svg>
 
         <header class="masthead">
@@ -88,7 +113,7 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
                 {
                     letters.map((l) => (
                         <span
-                            class:list={['ransom__l', { 'ransom__l--inv': l.invert }]}
+                            class:list={['ransom__l', { 'ransom__l--inv': l.invert, 'ransom__l--red': l.red }]}
                             style={`--rot:${l.rot}deg;--scl:${l.scale};font-family:${l.font}`}
                             aria-hidden="true"
                         >
@@ -219,7 +244,7 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         --paper-2: #e9e5d8;
         --ink: #14110d;
         --ink-soft: #3a342b;
-        --riso: #f0304d; /* the one accent — risograph red/pink */
+        --riso: #b3202c; /* the one accent — wine/brick red, like the ears */
 
         display: flex;
         justify-content: center;
@@ -351,17 +376,22 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         box-shadow: -3px 0 0 rgba(240, 48, 77, 0.35);
     }
 
-    /* xeroxed cat ears watermark */
+    /* xeroxed fluffy-ears watermark (black fur, wine-red inner tufts) */
     .ears {
         position: absolute;
         top: clamp(1rem, 6vw, 3rem);
         left: 50%;
         width: clamp(230px, 62%, 460px);
         transform: translateX(-50%) rotate(-2deg);
-        fill: var(--ink);
-        opacity: 0.07;
+        opacity: 0.13;
         z-index: 0 !important;
         pointer-events: none;
+    }
+    .ears__fur {
+        fill: var(--ink);
+    }
+    .ears__inner {
+        fill: var(--riso);
     }
 
     /* ── masthead ─────────────────────────────────────────────────────── */
@@ -402,6 +432,10 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         color: var(--paper);
         padding: 0.02em 0.1em;
         box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+    }
+    .ransom__l--red {
+        background: var(--riso);
+        box-shadow: 2px 2px 0 rgba(179, 32, 44, 0.3);
     }
 
     .subhead {
@@ -468,7 +502,7 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         z-index: 0;
         opacity: 0;
         pointer-events: none;
-        background: repeating-linear-gradient(46deg, #2b2620 0 3px, #17130f 3px 6px);
+        background: repeating-linear-gradient(46deg, #331418 0 3px, #17130f 3px 6px);
         border-right: 3px solid var(--riso);
     }
     .track.is-current .track__fill {
@@ -607,8 +641,8 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         transform: rotate(0deg) scale(1.03);
     }
     .stampbtn--go:hover {
-        background: #c31f3a;
-        border-color: #c31f3a;
+        background: #8f1823;
+        border-color: #8f1823;
     }
 
     .readout {
@@ -659,7 +693,7 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         border: 3px solid var(--riso);
         color: var(--riso);
         transform: rotate(-1.6deg);
-        box-shadow: 4px 4px 0 rgba(240, 48, 77, 0.25);
+        box-shadow: 4px 4px 0 rgba(179, 32, 44, 0.25);
         transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
     }
     .stamp--bc__lead {

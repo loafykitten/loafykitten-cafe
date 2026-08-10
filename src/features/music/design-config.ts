@@ -12,4 +12,4 @@ export const musicDesigns = [
 
 export type MusicDesignId = (typeof musicDesigns)[number]['id']
 
-export const activeDesign: MusicDesignId = 'voice-memos'
+export const activeDesign: MusicDesignId = 'zine-flyer'
