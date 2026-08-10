@@ -36,7 +36,7 @@ const COPY = {
 
 /* Ransom-note letter recipe. Cycled across the headliner so every letter
    gets a different font / rotation, and a few get inverted (black block). */
-type Ransom = { font: string; rot: number; invert: boolean; scale: number; red?: boolean }
+type Ransom = { font: string; rot: number; invert: boolean; scale: number; pride?: boolean }
 const RANSOM: Ransom[] = [
     { font: "'Anton', Impact, sans-serif", rot: -4, invert: false, scale: 1.02 },
     { font: 'Georgia, serif', rot: 3, invert: true, scale: 0.9 },
@@ -44,7 +44,7 @@ const RANSOM: Ransom[] = [
     { font: "'Special Elite', 'Courier New', monospace", rot: 5, invert: false, scale: 0.9 },
     { font: "'Arial Black', Arial, sans-serif", rot: -3, invert: false, scale: 1.0 },
     { font: 'Georgia, serif', rot: 4, invert: false, scale: 0.96 },
-    { font: "'Anton', Impact, sans-serif", rot: -5, invert: true, scale: 0.94, red: true },
+    { font: "'Anton', Impact, sans-serif", rot: -5, invert: true, scale: 0.94, pride: true },
     { font: "'Courier New', monospace", rot: 2, invert: false, scale: 0.98 },
 ]
 const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.length] }))
@@ -113,7 +113,7 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
                 {
                     letters.map((l) => (
                         <span
-                            class:list={['ransom__l', { 'ransom__l--inv': l.invert, 'ransom__l--red': l.red }]}
+                            class:list={['ransom__l', { 'ransom__l--inv': l.invert, 'ransom__l--pride': l.pride }]}
                             style={`--rot:${l.rot}deg;--scl:${l.scale};font-family:${l.font}`}
                             aria-hidden="true"
                         >
@@ -432,9 +432,18 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         padding: 0.02em 0.1em;
         box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
     }
-    .ransom__l--red {
-        background: var(--riso);
-        box-shadow: 2px 2px 0 rgba(179, 32, 44, 0.3);
+    /* the 'i' block is a little trans flag: blue-pink-[white i]-pink-blue,
+       with the white letterform itself acting as the centre stripe */
+    .ransom__l--pride {
+        background: linear-gradient(
+            90deg,
+            #5bcefa 0 25%,
+            #f5a9b8 25% 50%,
+            #f5a9b8 50% 75%,
+            #5bcefa 75% 100%
+        );
+        color: #fff;
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
     }
 
     .subhead {
