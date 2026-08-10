@@ -7,7 +7,7 @@ import { tracks, musicLinks, formatDuration } from '@/features/music/singy-songy
    ───────────────────────────────────────────────────────────────────────── */
 const COPY = {
     presents: 'basement records (a bedroom, actually) presents',
-    headliner: 'LOAFYKITTEN', // ransom-note treated, one <span> per letter
+    headliner: 'loafykitten', // ransom-note treated, one <span> per letter
     subhead: 'LIVE IN YOUR HEADPHONES — ONE NIGHT ONLY (every night)',
     collection: 'a collection of hip-hop & alt-emo-pop, recorded too late at night',
     setlistLabel: "TONIGHT'S SET",
@@ -423,7 +423,6 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         font-size: clamp(2.6rem, 12vw, 5.6rem);
         transform: rotate(var(--rot, 0deg)) scale(var(--scl, 1));
         color: var(--ink);
-        text-transform: uppercase;
         line-height: 0.8;
         padding: 0 0.02em;
     }
