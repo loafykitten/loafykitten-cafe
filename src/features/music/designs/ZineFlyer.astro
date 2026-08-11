@@ -164,6 +164,20 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
                 </button>
             </div>
 
+            <label class="volume">
+                <span class="volume__label">{COPY.transport.volume}</span>
+                <input
+                    type="range"
+                    class="volume__slider"
+                    data-volume
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="50"
+                    aria-label="Volume"
+                />
+            </label>
+
             <p class="readout">
                 <span
                     class="readout__status"
@@ -626,6 +640,51 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         border-color: #8f1823;
     }
 
+    .volume {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        cursor: pointer;
+    }
+    .volume[hidden] {
+        display: none;
+    }
+    .volume__label {
+        font-family: 'Anton', Impact, sans-serif;
+        font-size: clamp(0.75rem, 2.6vw, 0.9rem);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--ink);
+        transform: rotate(-1.5deg);
+    }
+    .volume__slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: clamp(90px, 18vw, 140px);
+        height: 4px;
+        margin: 0;
+        background: repeating-linear-gradient(90deg, var(--ink) 0 8px, transparent 8px 12px);
+        cursor: ew-resize;
+    }
+    .volume__slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 14px;
+        height: 18px;
+        border-radius: 0;
+        background: var(--riso);
+        border: 2.5px solid var(--ink);
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+    .volume__slider::-moz-range-thumb {
+        width: 14px;
+        height: 18px;
+        border-radius: 0;
+        background: var(--riso);
+        border: 2.5px solid var(--ink);
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
     .readout {
         margin: 0;
         display: flex;
@@ -763,7 +822,7 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
     }
 
     /* ── focus & motion ───────────────────────────────────────────────── */
-    .flyer :is(button, a, [role='slider']):focus-visible {
+    .flyer :is(button, a, input, [role='slider']):focus-visible {
         outline: 3px solid var(--riso);
         outline-offset: 2px;
     }
@@ -859,6 +918,21 @@ const letters = [...COPY.headliner].map((ch, i) => ({ ch, ...RANSOM[i % RANSOM.l
         prevBtn?.addEventListener('click', () => player.prev())
         nextBtn?.addEventListener('click', () => player.next())
         playBtn?.addEventListener('click', () => player.toggle())
+
+        // volume — the input's value (50 by default) is the source of truth,
+        // so a browser-restored slider position survives reloads
+        const volumeEl = root.querySelector<HTMLInputElement>('[data-volume]')
+        if (volumeEl) {
+            if (MusicPlayer.canControlVolume()) {
+                player.setVolume(Number(volumeEl.value) / 100)
+                volumeEl.addEventListener('input', () => {
+                    player.setVolume(Number(volumeEl.value) / 100)
+                })
+            } else {
+                // iOS Safari: volume is hardware-only, a slider here would lie
+                volumeEl.closest('.volume')?.setAttribute('hidden', '')
+            }
+        }
 
         // seek — click/drag across the current row's bar
         seeks.forEach((seek, i) => {

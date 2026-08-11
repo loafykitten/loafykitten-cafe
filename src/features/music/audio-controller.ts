@@ -17,12 +17,21 @@ export type PlayerEventMap = {
     stop: (track: PlayerTrack) => void
     /** fires on timeupdate; progress is 0..1 */
     time: (currentTime: number, duration: number, progress: number) => void
+    /** volume changed; volume is 0..1 */
+    volume: (volume: number) => void
     error: (track: PlayerTrack) => void
 }
 
 type EventName = keyof PlayerEventMap
 
 export class MusicPlayer {
+    /** iOS Safari ignores the volume setter (hardware buttons only) — probe by write-back */
+    static canControlVolume(): boolean {
+        const probe = new Audio()
+        probe.volume = 0.5
+        return probe.volume === 0.5
+    }
+
     readonly tracks: PlayerTrack[]
     current: PlayerTrack | null = null
     isPlaying = false
@@ -34,6 +43,7 @@ export class MusicPlayer {
         pause: [],
         stop: [],
         time: [],
+        volume: [],
         error: [],
     }
 
@@ -41,6 +51,11 @@ export class MusicPlayer {
         this.tracks = tracks
         this.audio = new Audio()
         this.audio.preload = 'none'
+        this.audio.volume = 0.5
+
+        this.audio.addEventListener('volumechange', () => {
+            this.emit('volume', this.audio.volume)
+        })
 
         this.audio.addEventListener('play', () => {
             this.isPlaying = true
@@ -149,6 +164,15 @@ export class MusicPlayer {
         const wasPlaying = this.isPlaying
         this.select(i)
         if (wasPlaying) this.play()
+    }
+
+    get volume(): number {
+        return this.audio.volume
+    }
+
+    /** fraction is 0..1 */
+    setVolume(fraction: number) {
+        this.audio.volume = Math.min(Math.max(fraction, 0), 1)
     }
 
     /** fraction is 0..1 */

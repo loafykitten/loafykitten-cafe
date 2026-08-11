@@ -147,7 +147,8 @@
             "prev": "PREV",
             "play": "PLAY",
             "pause": "PAUSE",
-            "next": "NEXT"
+            "next": "NEXT",
+            "volume": "VOL"
         },
         "stamps": {
             "bandcampLead": "FREE ON BANDCAMP",
