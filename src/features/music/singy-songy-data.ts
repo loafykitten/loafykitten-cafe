@@ -9,7 +9,9 @@ export type Track = {
     duration: number
 }
 
-const file = (name: string) => encodeURI(`/music/singy-songy/${name}`)
+// encodeURIComponent, not encodeURI: the asset server redirects URLs with a
+// bare comma ("08 love,.mp3") to the %2C form, costing a round trip per fetch
+const file = (name: string) => `/music/singy-songy/${encodeURIComponent(name)}`
 
 export const tracks: Track[] = [
     { index: 0, title: 'Pressure', href: file('01 Pressure.mp3'), duration: 96 },

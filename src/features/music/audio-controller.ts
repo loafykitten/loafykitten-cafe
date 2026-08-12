@@ -37,6 +37,8 @@ export class MusicPlayer {
     isPlaying = false
 
     private audio: HTMLAudioElement
+    /** mid-stream failure recoveries used on the current track */
+    private retries = 0
     private listeners: { [K in EventName]: PlayerEventMap[K][] } = {
         change: [],
         play: [],
@@ -70,7 +72,21 @@ export class MusicPlayer {
         })
 
         this.audio.addEventListener('ended', () => {
-            this.next(true)
+            // A mid-stream network failure (e.g. a failed Range resume) makes the
+            // browser truncate the track and fire 'ended' early. Compare against
+            // the track's known duration and retry from the same spot before
+            // treating it as a real end-of-track.
+            const t = this.current
+            const early = t !== null && (this.audio.error !== null || this.audio.currentTime < t.duration - 2)
+            if (!early) {
+                this.next(true)
+                return
+            }
+            if (this.tryRecover(this.audio.currentTime)) return
+            // out of retries: a persistent failure would make every track skip
+            // mid-song too, so report it instead of advancing
+            this.isPlaying = false
+            if (t) this.emit('error', t)
         })
 
         this.audio.addEventListener('timeupdate', () => {
@@ -80,9 +96,45 @@ export class MusicPlayer {
         })
 
         this.audio.addEventListener('error', () => {
-            this.isPlaying = false
-            if (this.current) this.emit('error', this.current)
+            // A failed background fetch fires 'error' while buffered audio keeps
+            // playing — surfacing it immediately would show a failure over
+            // audible music. Only report when playback never started.
+            if (this.audio.paused || this.audio.ended) {
+                this.isPlaying = false
+                if (this.current) this.emit('error', this.current)
+                return
+            }
+            // Still "playing": either the buffer carries on (the early-'ended'
+            // path recovers later) or a fatal decode error froze the clock —
+            // detect the frozen case by checking for progress shortly after.
+            const track = this.current
+            const at = this.audio.currentTime
+            setTimeout(() => {
+                if (this.current !== track) return
+                if (this.audio.paused || this.audio.ended || this.audio.currentTime > at) return
+                if (this.tryRecover(at)) return
+                this.isPlaying = false
+                if (track) this.emit('error', track)
+            }, 1500)
         })
+    }
+
+    /** reload the current track and continue from `position`; false once the
+     *  per-track retry budget is spent */
+    private tryRecover(position: number): boolean {
+        if (!this.current || this.retries >= 2) return false
+        this.retries++
+        this.audio.src = this.current.href
+        this.audio.load()
+        this.audio.addEventListener(
+            'loadedmetadata',
+            () => {
+                this.audio.currentTime = position
+            },
+            { once: true },
+        )
+        this.audio.play().catch(() => {})
+        return true
     }
 
     on<K extends EventName>(event: K, cb: PlayerEventMap[K]): this {
@@ -101,6 +153,7 @@ export class MusicPlayer {
         const track = this.tracks[index]
         if (!track || track === this.current) return
         this.isPlaying = false
+        this.retries = 0
         this.current = track
         this.audio.src = track.href
         this.audio.load()
