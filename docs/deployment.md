@@ -9,6 +9,8 @@ integration (Workers Builds).
 2. Cloudflare builds the site and deploys the worker described in
    `wrangler.jsonc`. Build settings and logs live in the Cloudflare dashboard
    under the worker's **Settings → Build**, not in this repository.
+3. Before uploading, `wrangler deploy` runs `bun run check` (the `build`
+   command in `wrangler.jsonc`), so an Astro or type error fails the deploy.
 
 The worker serves the static build from `dist/` and answers `/music/*` range
 requests via the shim in `worker/index.js` (see `wrangler.jsonc`).

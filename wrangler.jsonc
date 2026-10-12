@@ -11,6 +11,11 @@
     // everything else is served straight from static assets
     "run_worker_first": ["/music/*"]
   },
+  // runs before every `wrangler deploy` (including Cloudflare's Git builds),
+  // so a type or template error blocks the deploy
+  "build": {
+    "command": "bun run check"
+  },
   "workers_dev": false,
   "preview_urls": false
 }
