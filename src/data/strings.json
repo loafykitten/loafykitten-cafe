@@ -85,7 +85,7 @@
     },
     "projects": {
         "title": "projects",
-        "description": "Featured projects by Ember — real-time speech detection, game modding, and web frameworks.",
+        "description": "Featured projects by Ember: a native macOS/iOS AI assistant, an AI companion, a native Apple Silicon game port, agent tooling, and real-time speech detection.",
         "prompt": "cat /users/a.ember/projects.dat",
         "fileLabel": "PROJECT FILES — FEATURED",
         "fileSublabelTemplate": "{count} entries found",
@@ -95,28 +95,44 @@
         "viewProject": "> view project",
         "entries": [
             {
+                "name": "SwiftClaw",
+                "date": "Jun 2026 — Present",
+                "tagline": "Native AI Assistant for macOS and iOS",
+                "descriptionHtml": "A SwiftUI + SwiftData assistant that works across a multi-account IMAP/SMTP mail client, calendar, reminders, a local-first Markdown notes vault and curated memory, using models from Azure OpenAI, Neuralwatt or OpenRouter. Note edits wait as approval cards, and gated memory writes can be edited before you accept them. Deep Research plans, searches and fetches sources, writes a cited report, and checks cited claims against stored evidence. Its fetcher withholds any response unless every connection reached a public address, which guards against SSRF and DNS rebinding. Notes search fuses SQLite FTS5 and on-device NLEmbedding vectors with reciprocal rank fusion. About 80k lines of Swift 6 under strict concurrency (MainActor by default, actors for background work), with 1,300+ Swift Testing tests.",
+                "tags": ["Swift 6", "SwiftUI", "SwiftData", "Swift Concurrency", "SQLite FTS5", "IMAP/SMTP", "macOS", "iOS"],
+                "href": "https://github.com/loafykitten/SwiftClaw"
+            },
+            {
+                "name": "Project Valerie",
+                "date": "Sep 2026 — Present",
+                "tagline": "Self-Hosted AI Companion with Receipt-Backed Outcomes",
+                "descriptionHtml": "A single-user AI companion on Telegram, run from a React dashboard. Every turn pins an immutable snapshot of prompts, settings and history that retries reuse, and every tool outcome is recorded as a receipt. Telegram deliveries and image renders count as done only after the external system confirms them. Includes revisioned prompts, long-term memory with Obsidian vault retrieval, time-zone-exact reminders, bounded tool calls and ComfyUI image generation. A Bun workspace monorepo with ~60k lines of strict TypeScript, SQLite with no ORM, 500+ tests in CI, and backend hot-reload that keeps the database and Telegram polling alive.",
+                "tags": ["TypeScript", "Bun", "SQLite", "React", "LLM Tool Calling", "Docker"],
+                "href": "https://github.com/loafykitten/project-valerie"
+            },
+            {
+                "name": "pf-wotr-silicon",
+                "date": "Oct 2026",
+                "tagline": "Native Apple Silicon Port of a Shipped Unity Game",
+                "descriptionHtml": "Build tooling that turns a Steam install of Pathfinder: Wrath of the Righteous (Intel-only on Mac) into a native arm64 build without touching the original. Includes a C++ shim that implements the legacy Steamworks 1.41 API on a modern universal library, and a mod that replaces a slow managed DXT texture compressor with a native one, verified byte-identical across ~9.3M fuzzed blocks. Measured on an M2 Max against the Rosetta build: first-play cutscene hitches drop from ~36 to ~5 and p99 frame time from 34 ms to 22 ms. The native compressor plus shorter cleanup waits cut save loads from ~11.5 s to ~6.5 s.",
+                "tags": ["C", "C++", "C#", "Unity", "Harmony", "Shell", "Performance Profiling"],
+                "href": "https://github.com/loafykitten/pf-wotr-silicon"
+            },
+            {
+                "name": "HarnessDeck",
+                "date": "Jul 2026 — Present",
+                "tagline": "Local Control Center for Claude Code and Codex",
+                "descriptionHtml": "A local web dashboard for coding agents. It runs persistent agent sessions in tmux, streamed to xterm.js over WebSockets, and adds structured chats with git worktree isolation, a skills manager that syncs between harnesses, and usage tracking. Harnesses sit behind a common driver interface, and Codex is integrated through its typed app-server protocol. Since the server can start real shells, every request must carry an allowed loopback or tailnet Host, and any browser Origin must match it. That blocks cross-site and DNS-rebinding attacks.",
+                "tags": ["TypeScript", "Bun", "Svelte 5", "WebSockets", "tmux", "xterm.js"],
+                "href": "https://github.com/loafykitten/HarnessDeck"
+            },
+            {
                 "name": "Swear Jar",
-                "date": "Jan 2026",
-                "tagline": "Real-Time Speech Detection + Live Web Widget",
-                "descriptionHtml": "Two-component system: a web service with API and WebSocket broadcasting for a live widget, paired with a Python speech detection client powered by Whisper. Pipeline flows from audio capture through Whisper transcription, profanity detection, API event dispatch, WebSocket broadcast, to live UI update.",
-                "tags": ["Python", "TypeScript"],
+                "date": "Dec 2025 — Jan 2026",
+                "tagline": "Real-Time Speech Detection + Live Stream Widget",
+                "descriptionHtml": "Two-part system for live streams. Vox, a Python TUI built on Textual and faster-whisper, captures audio, transcribes it and detects profanity. It sends events to an authenticated Bun service, which broadcasts them over WebSockets to an animated OBS browser-source widget. The web service is deployable with Docker.",
+                "tags": ["Python", "TypeScript", "Whisper", "WebSockets", "Docker"],
                 "href": "https://github.com/loafykitten/swear-jar"
-            },
-            {
-                "name": "Elden Ring: Classes Expanded",
-                "date": "Jan 2026 — Present",
-                "tagline": "Game Modification for AAA FromSoftware Title",
-                "descriptionHtml": "Reverse-engineered game architecture to create custom weapon variants and a modular mod structure using Mod Engine 3. Features two original character archetypes — Abysswalker and Bestia — each with unique starting builds and equipment.",
-                "tags": ["Mod Engine 3", "Git", "Game Asset Modification"],
-                "href": "https://github.com/loafykitten/er-modding"
-            },
-            {
-                "name": "Transgress",
-                "date": "Sep 2024 — Present",
-                "tagline": "TypeScript-First Web Server Framework for Bun",
-                "descriptionHtml": "HTTP routing, middleware pipeline, custom logger, WebSocket support, and HTML templating. Published as <a class=\"link-cyan\" href=\"https://www.npmjs.com/package/@loafykitten/transgress\" target=\"_blank\" rel=\"noopener noreferrer\">@loafykitten/transgress</a> on npm. A learning project exploring web framework fundamentals from the ground up.",
-                "tags": ["TypeScript"],
-                "href": "https://github.com/loafykitten/transgress"
             }
         ]
     },
