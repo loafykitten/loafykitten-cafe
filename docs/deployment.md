@@ -1,21 +1,17 @@
 # Deployment
 
-This project deploys to Cloudflare Workers through GitHub Actions.
+This project deploys to Cloudflare Workers through Cloudflare's Git
+integration (Workers Builds).
 
 ## Deployment flow
 
-1. Push to `main` (or trigger the `Deploy Worker` workflow manually).
-2. GitHub Actions runs `bun install --frozen-lockfile` and `bun run check`.
-3. If validation passes, Actions runs `bun run deploy`, which builds the site
-   and runs `wrangler deploy -c ./wrangler.jsonc --no-autoconfig`.
+1. Push to `main`.
+2. Cloudflare builds the site and deploys the worker described in
+   `wrangler.jsonc`. Build settings and logs live in the Cloudflare dashboard
+   under the worker's **Settings → Build**, not in this repository.
 
 The worker serves the static build from `dist/` and answers `/music/*` range
 requests via the shim in `worker/index.js` (see `wrangler.jsonc`).
-
-## GitHub Actions secrets
-
-- `CLOUDFLARE_API_TOKEN`: API token with the **Edit Cloudflare Workers** permission
-- `CLOUDFLARE_ACCOUNT_ID`: account ID from the Cloudflare dashboard
 
 ## Manual deploy
 
