@@ -70,7 +70,7 @@
         ],
         "eof": "[EOF]",
         "title": "portfolio",
-        "description": "Ember — Senior Mobile Engineer and Game Server Engineer. Projects, experience, and more.",
+        "description": "Ember — Software Engineer with six years specializing in mobile, now building across iOS, macOS, AI agents, and more.",
         "prompt": "cat /users/a.ember/overview.dat",
         "fileLabel": "DOSSIER — OVERVIEW",
         "headshotAlt": "ember headshot",
@@ -78,7 +78,7 @@
         "role": "Software Engineer",
         "aboutHeading": "// ABOUT",
         "aboutParagraphsHtml": [
-            "Hiii! I specialize in any-stack development. I build across mobile, backend, desktop, and game server environments.",
+            "Hiii! I'm an any-stack engineer with six years specializing in mobile. These days I build native iOS and macOS apps, AI assistants and agent tooling, and the occasional game port to Apple Silicon.",
             "With a decade+ of experience in the industry, I've contributed to projects from B2B software to indie games.",
             "When I'm not working or studying, I'm grinding my projects, my lofi, or gaming. All live as <a href=\"/vtuber\" class=\"link-loafykitten\">loafykitten</a>!"
         ]
